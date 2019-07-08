@@ -88,6 +88,14 @@ data = text.split('\n')
 # Loop that removes characters relating to the categories of the data
 for i in range(len(data)):
     data[i] = re.sub(r'^|..........\s+[=$]', '', data[i])
+    
+# Checks to see if the category op res is missing by looking at the content of the 8th index for fire mode |Single
+# If true it inserts an extra 0 into the list in the 6th index where op res should've been
+if re.match(r'\|Single', data[7]):
+    data.insert(6, 0)
+
+if re.match(r'\|Single', data[8]):
+    data.insert(6, 0)
 
 # Removes weapons and the type of weapon up to the | symbol
 data[0] = re.sub(r'\[.+?\|', '', data[0])
@@ -168,8 +176,11 @@ data = text.split('\n')
 for i in range(len(data)):
     data[i] = re.sub(r'^|..........\s+[=$]', '', data[i])
 
-# Checks to see if the category op res is missing by looking at the content of the 8th index for fire mode |Single
+# Checks to see if the category op res is missing by looking at the content of the 7th and 8th index for fire mode |Single
 # If true it inserts an extra 0 into the list in the 6th index where op res should've been
+if re.match(r'\|Single', data[7]):
+    data.insert(6, 0)
+
 if re.match(r'\|Single', data[8]):
     data.insert(6, 0)
   
@@ -253,9 +264,12 @@ for i in range(len(data)):
 
 # Checks to see if the category op res is missing by looking at the content of the 8th index for fire mode |Single
 # If true it inserts an extra 0 into the list in the 6th index where op res should've been
+if re.match(r'\|Single', data[7]):
+    data.insert(6, 0)
+
 if re.match(r'\|Single', data[8]):
     data.insert(6, 0)
-  
+    
 # Removes weapons and the type of weapon up to the | symbol
 data[0] = re.sub(r'\[.+?\|', '', data[0])
    
@@ -333,6 +347,9 @@ for i in range(len(data)):
 
 # Checks to see if the category op res is missing by looking at the content of the 8th index for fire mode |Single
 # If true it inserts an extra 0 into the list in the 6th index where op res should've been
+if re.match(r'\|Single', data[7]):
+    data.insert(6, 0)
+
 if re.match(r'\|Single', data[8]):
     data.insert(6, 0)
     
@@ -373,7 +390,7 @@ for i in range(len(data)):
      
 weaponDF[gunName] = weaponList                     
 
-print(weaponDF.iloc[1,:])
+#print(weaponDF.iloc[1,:])
 
 #####
 # End gun 4
@@ -416,16 +433,8 @@ for i in range(len(data)):
 
 # Checks to see if the category op res is missing by looking at the content of the 8th index for fire mode |Single
 # If true it inserts an extra 0 into the list in the 6th index where op res should've been
-while re.match(r'\|Single', data[8])
-
-for i in range(len(data)):
-    if re.match(r'\|Single', data[7]):
-        data.insert(6, 0)
-    elif re.match(r'\|Single', data[8]):
-        data.insert(6, 0)
-    else: 
-        break
-
+if re.match(r'\|Single', data[7]):
+    data.insert(6, 0)
 
 if re.match(r'\|Single', data[8]):
     data.insert(6, 0)
@@ -467,10 +476,96 @@ for i in range(len(data)):
      
 weaponDF[gunName] = weaponList                     
 
-print(weaponDF.iloc[1,:])
+#print(weaponDF.iloc[1,:])
 
 #####
 # End gun 5
+#####
+
+#####
+# Start gun 6
+#####
+
+# Pull down weapon page
+webpage = requests.get("https://escapefromtarkov.gamepedia.com/index.php?title=Remington_Model_870_12ga_shotgun&action=edit")
+
+# Decode the page
+webpageSrc = webpage.content.decode('utf-8')
+
+# conver the page to beautiful soup format
+soup = bs(webpageSrc, 'lxml')
+
+# Grab gun name from the firstHeading
+gunName = soup.find('h1', id='firstHeading').text
+
+# Remove editing from the start of the guns name
+gunName = re.sub('Editing ', '', gunName)
+
+# converts textarea to a string
+text = str(soup.textarea.contents[0])
+
+# splits on '|type' and only keeps the last indexed item by using -1
+text = text.split('|type', 1)[-1]
+
+# splits on '|ammo' and only keeps the first indexed item by using 0
+text = text.split('|ammo', 1)[0]
+
+# splits on '\n'
+data = text.split('\n')
+
+# Loop that removes characters relating to the categories of the data
+for i in range(len(data)):
+    data[i] = re.sub(r'^|..........\s+[=$]', '', data[i])
+
+# Checks to see if the category op res is missing by looking at the content of the 8th index for fire mode |Single
+# If true it inserts an extra 0 into the list in the 6th index where op res should've been
+if re.match(r'\|Single', data[7]):
+    data.insert(6, 0)
+
+if re.match(r'\|Single', data[8]):
+    data.insert(6, 0)
+    
+# Removes weapons and the type of weapon up to the | symbol
+data[0] = re.sub(r'\[.+?\|', '', data[0])
+   
+# Removes the trailing bracket symbols
+data[0] = re.sub(r'\]\]', '', data[0])
+data[17] = re.sub(r'\]\]', '', data[17])
+data[18] = re.sub(r'\]\]', '', data[18])
+
+# Removes the leading bracket symbols
+data[17] = re.sub(r'\[\[', '', data[17])
+data[18] = re.sub(r'\[\[', '', data[18])
+
+# Removes the leading | symbol from 9, 10, 11
+data[9] = re.sub(r'\|', '', data[9])
+data[10] = re.sub(r'\|', '', data[10])
+data[11] = re.sub(r'\|', '', data[11])
+
+# Removes the <br/> tag from this element
+data[15] = re.sub(r'<br/>', ', ', data[15])
+
+# Removes the <br/> tag from this element
+data[9] = re.sub(r'<br/>', ', ', data[9])
+
+
+# Initialize an empty list
+weaponList = []
+
+# Use a loop to move the data into the list where a data element is present in the numbers list
+# Otherwise include a 0
+for i in range(len(data)):
+    if i in numbers:
+        weaponList.append(data[i])
+    else:
+        weaponList.append(0)
+     
+weaponDF[gunName] = weaponList                     
+
+print(weaponDF.iloc[18,:])
+
+#####
+# End gun 6
 ##### 
 
 ###############################
