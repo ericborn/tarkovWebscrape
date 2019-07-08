@@ -102,12 +102,14 @@ CREATE INDEX "fkIdx_305" ON "public"."armorProperties"
  "traderId"
 );
 
+--drop table public.weaponProperties
 -- ************************************** "public"."weaponProperties"
-CREATE TABLE "public"."weaponProperties"
+CREATE TABLE public.weaponProperties
 (
- "weaponId"      		smallint NOT NULL GENERATED ALWAYS AS IDENTITY,
+ "weaponId"      		smallint NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
  "itemTypeId"	 		smallint NOT NULL,
  "slotId"        		smallint NOT NULL,
+ "name"					varchar(50),
  "weight"        		varchar(10),
  "gridSize"      		varchar(10),
  "price"      	 		varchar(5),
@@ -121,10 +123,38 @@ CREATE TABLE "public"."weaponProperties"
  "muzzleVelocity"       varchar(10),
  "effectiveDistance"    varchar(6),
  "accuracy"      		varchar(1),
- "recoilHoriz"     		smallint,
  "recoilvert"     		smallint,
+ "recoilHoriz"     		smallint,
  "rpm"    				smallint,
- "caliber"        		varchar(10),
- "defaultAmmo"        	varchar(10),
- "defaultmag"			varchar(10)
+ "caliber"        		varchar(30),
+ "defaultAmmo"        	varchar(50),
+ "defaultmag"			varchar(50)
 );
+
+--drop table slot
+CREATE TABLE slot
+(
+	"slotId"	smallint NOT NULL GENERATED ALWAYS AS IDENTITY,
+	"slot"		varchar(50)
+);
+
+-- Insert values into slot table
+INSERT INTO public.slot("slot")
+VALUES('Primary'),('Secondary'),('Melee'),('Headwear'),('Earpiece'),('Face Cover'),('Body Armor'),('Armband'),('Eyewear'),('Chest Rig'),('Backpack');
+
+--SELECT * FROM slot
+
+--drop table itemType
+CREATE TABLE itemType
+(
+	"itemTypeId"	smallint NOT NULL GENERATED ALWAYS AS IDENTITY,
+	"itemType"		varchar(50)
+);
+
+INSERT INTO public.itemType("itemType")
+VALUES('Assault rifle'),('Assault carbine'),('Light machine gun'),('Submachine gun'),('Shotgun'),('Designated marksman rifle'),
+('Sniper rifle'),('Pistol'),('Melee weapon'),('Fragmentation grenade'),('Smoke grenade'),('Stun grenade'),('Mask'),('Armor vest'),('Helmet'),('Armored chest rig'),
+('Chest rig'),('Night vision'),('Goggles'),('Backpack');
+--,(''),(''),(''),(''),(''),(''),(''),(''),(''),(''),(''),('');
+
+SELECT * FROM itemType

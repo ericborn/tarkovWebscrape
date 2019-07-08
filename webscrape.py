@@ -8,24 +8,25 @@ data extracted for the category and index positions
 =============================================================================
 #0 type
 #1 slot
-#2 weight
-#3 grid size
-#4 price
-#5 trader
-#6 op res
-#7 rarity
-#8 repair
-#9 fire modes
-#10 sight range
-#11 ergo
-#12 muzzle velo
-#13 Effective distance
-#14 accuracy
-#15 recoil
-#16 rpm
-#17 caliber
-#18 default ammo
-#19 default mag
+#2 name
+#3 weight
+#4 grid size
+#5 price
+#6 trader
+#7 op res
+#8 rarity
+#9 repair
+#10 fire modes
+#11 sight range
+#12 ergo
+#13 muzzle velo
+#14 Effective distance
+#15 accuracy
+#16 recoil
+#17 rpm
+#18 caliber
+#19 default ammo
+#20 default mag
 =============================================================================
 
 Create a mapping for item type and slot to an int for the slot and itemType tables
@@ -33,9 +34,8 @@ Create a mapping for item type and slot to an int for the slot and itemType tabl
 pull out recoil vertical and horizontal into individual items
 
 mapping for tradersId to name
-
-
 """
+
 import requests
 from bs4 import BeautifulSoup as bs
 import pandas as pd
@@ -45,18 +45,15 @@ import re
 # Start setup
 ######
 # Creates a number set that corresponds to the categorys we're actully pulling data in from
-numbers = [0, 1, 2, 3, 9, 10, 11, 12, 13, 15, 16, 17, 18]
+numbers = [0, 1, 2, 3, 4, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20]
 
 #Initalize category list
-category = {'Category':['Type','Slot','Weight','Grid size','Price','Trader','Op Res','Rarity','Repair','Fire Modes',
-                        'Sighting range','Ergonomics','Muzzle velocity','Effective distance','Accuracy','Vertical Recoil',
-                        'Horizontal Recoil','Rate of fire (RPM)','Caliber','Default ammo','Default mag']}
-
-# Create empty list to store the weapon data
-weaponList = []
+colmns = ['itemTypeId','slotId','name','weight','gridSize','price','traderId','opRes','rarity','repair','fireModes',
+           'sightingRange','ergonomics','muzzleVelocity','effectiveDistance','accuracy','recoilVert',
+           'recoilHoriz','rpm','caliber','defaultAmmo','defaultMag']
 
 # Convert the categories into a dataframe 
-weaponDF = pd.DataFrame(category)
+#weaponDF = pd.DataFrame(columns)
 
 ######
 # End setup
@@ -104,40 +101,43 @@ if re.match(r'\|Single', data[7]):
 
 if re.match(r'\|Single', data[8]):
     data.insert(6, 0)
+    
+# Add weapon name as position 2
+data.insert(2, gunName)
 
 # Removes weapons and the type of weapon up to the | symbol
 data[0] = re.sub(r'\[.+?\|', '', data[0])
    
 # Removes the trailing bracket symbols
 data[0] = re.sub(r'\]\]', '', data[0])
-data[17] = re.sub(r'\]\]', '', data[17])
 data[18] = re.sub(r'\]\]', '', data[18])
+data[19] = re.sub(r'\]\]', '', data[19])
 
 # Removes the leading bracket symbols
-data[17] = re.sub(r'\[\[', '', data[17])
 data[18] = re.sub(r'\[\[', '', data[18])
+data[19] = re.sub(r'\[\[', '', data[19])
 
 # Removes the leading | symbol
-data[10] = re.sub(r'\|', '', data[10])
 data[11] = re.sub(r'\|', '', data[11])
+data[12] = re.sub(r'\|', '', data[12])
 
 # Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
-data[15] = re.sub(r'<br/>', ' ', data[15])
-data.insert(15, data[15])
+data[16] = re.sub(r'<br/>', ' ', data[16])
+data.insert(16, data[16])
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[15] = re.sub(r'Vertical: ', '', data[15])
-data[15] = re.sub(r' Horizontal:....', '', data[15])
+data[16] = re.sub(r'Vertical: ', '', data[16])
+data[16] = re.sub(r' Horizontal:....', '', data[16])
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[16] = re.sub(r'Vertical:.*?H', '', data[16])
-data[16] = re.sub(r'orizontal: ', '', data[16])
+data[17] = re.sub(r'Vertical:.*?H', '', data[17])
+data[17] = re.sub(r'orizontal: ', '', data[17])
 
 # Removes the <br/> tag from this element
-data[9] = re.sub(r'<br/>', ', ', data[9])
+data[10] = re.sub(r'<br/>', ', ', data[10])
 
 # Removes the | symbol
-data[9] = re.sub(r'\|', '', data[9])
+data[10] = re.sub(r'\|', '', data[10])
 
 # Initialize an empty list
 weaponList = []
@@ -150,9 +150,9 @@ for i in range(len(data)):
     else:
         weaponList.append(0)
      
-weaponDF[gunName] = weaponList                     
+#weaponDF[gunName] = weaponList   
 
-#weaponDF
+weaponDF = pd.DataFrame([weaponList], columns = colmns)
  
 #####
 # End gun 1
@@ -201,39 +201,42 @@ if re.match(r'\|Single', data[7]):
 if re.match(r'\|Single', data[8]):
     data.insert(6, 0)
   
+# Add weapon name as position 2
+data.insert(2, gunName)
+
 # Removes weapons and the type of weapon up to the | symbol
 data[0] = re.sub(r'\[.+?\|', '', data[0])
    
 # Removes the trailing bracket symbols
 data[0] = re.sub(r'\]\]', '', data[0])
-data[17] = re.sub(r'\]\]', '', data[17])
 data[18] = re.sub(r'\]\]', '', data[18])
+data[19] = re.sub(r'\]\]', '', data[19])
 
 # Removes the leading bracket symbols
-data[17] = re.sub(r'\[\[', '', data[17])
 data[18] = re.sub(r'\[\[', '', data[18])
+data[19] = re.sub(r'\[\[', '', data[19])
 
 # Removes the leading | symbol
-data[10] = re.sub(r'\|', '', data[10])
 data[11] = re.sub(r'\|', '', data[11])
+data[12] = re.sub(r'\|', '', data[12])
 
 # Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
-data[15] = re.sub(r'<br/>', ' ', data[15])
-data.insert(15, data[15])
+data[16] = re.sub(r'<br/>', ' ', data[16])
+data.insert(16, data[16])
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[15] = re.sub(r'Vertical: ', '', data[15])
-data[15] = re.sub(r' Horizontal:....', '', data[15])
+data[16] = re.sub(r'Vertical: ', '', data[16])
+data[16] = re.sub(r' Horizontal:....', '', data[16])
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[16] = re.sub(r'Vertical:....', '', data[16])
-data[16] = re.sub(r' Horizontal: ', '', data[16])
+data[17] = re.sub(r'Vertical:.*?H', '', data[17])
+data[17] = re.sub(r'orizontal: ', '', data[17])
 
 # Removes the <br/> tag from this element
-data[9] = re.sub(r'<br/>', ', ', data[9])
+data[10] = re.sub(r'<br/>', ', ', data[10])
 
 # Removes the | symbol
-data[9] = re.sub(r'\|', '', data[9])
+data[10] = re.sub(r'\|', '', data[10])
 
 # Initialize an empty list
 weaponList = []
@@ -245,8 +248,12 @@ for i in range(len(data)):
         weaponList.append(data[i])
     else:
         weaponList.append(0)
-     
-weaponDF[gunName] = weaponList                     
+
+# Store new gun in second dataframe    
+weaponDF2 = pd.DataFrame([weaponList], columns = colmns)              
+
+# Append df2 to original df
+weaponDF = weaponDF.append(weaponDF2)
 
 #weaponDF.iloc[0,:]
 
@@ -297,39 +304,42 @@ if re.match(r'\|Single', data[7]):
 if re.match(r'\|Single', data[8]):
     data.insert(6, 0)
     
+# Add weapon name as position 2
+data.insert(2, gunName)
+
 # Removes weapons and the type of weapon up to the | symbol
 data[0] = re.sub(r'\[.+?\|', '', data[0])
    
 # Removes the trailing bracket symbols
 data[0] = re.sub(r'\]\]', '', data[0])
-data[17] = re.sub(r'\]\]', '', data[17])
 data[18] = re.sub(r'\]\]', '', data[18])
+data[19] = re.sub(r'\]\]', '', data[19])
 
 # Removes the leading bracket symbols
-data[17] = re.sub(r'\[\[', '', data[17])
 data[18] = re.sub(r'\[\[', '', data[18])
+data[19] = re.sub(r'\[\[', '', data[19])
 
 # Removes the leading | symbol
-data[10] = re.sub(r'\|', '', data[10])
 data[11] = re.sub(r'\|', '', data[11])
+data[12] = re.sub(r'\|', '', data[12])
 
 # Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
-data[15] = re.sub(r'<br/>', ' ', data[15])
-data.insert(15, data[15])
+data[16] = re.sub(r'<br/>', ' ', data[16])
+data.insert(16, data[16])
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[15] = re.sub(r'Vertical: ', '', data[15])
-data[15] = re.sub(r' Horizontal:....', '', data[15])
+data[16] = re.sub(r'Vertical: ', '', data[16])
+data[16] = re.sub(r' Horizontal:....', '', data[16])
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[16] = re.sub(r'Vertical:....', '', data[16])
-data[16] = re.sub(r' Horizontal: ', '', data[16])
+data[17] = re.sub(r'Vertical:.*?H', '', data[17])
+data[17] = re.sub(r'orizontal: ', '', data[17])
 
 # Removes the <br/> tag from this element
-data[9] = re.sub(r'<br/>', ', ', data[9])
+data[10] = re.sub(r'<br/>', ', ', data[10])
 
 # Removes the | symbol
-data[9] = re.sub(r'\|', '', data[9])
+data[10] = re.sub(r'\|', '', data[10])
 
 # Initialize an empty list
 weaponList = []
@@ -342,7 +352,11 @@ for i in range(len(data)):
     else:
         weaponList.append(0)
      
-weaponDF[gunName] = weaponList                     
+# Store new gun in second dataframe    
+weaponDF2 = pd.DataFrame([weaponList], columns = colmns)              
+
+# Append df2 to original df
+weaponDF = weaponDF.append(weaponDF2)
 
 #####
 # End gun 3
@@ -391,39 +405,42 @@ if re.match(r'\|Single', data[7]):
 if re.match(r'\|Single', data[8]):
     data.insert(6, 0)
     
+# Add weapon name as position 2
+data.insert(2, gunName)
+
 # Removes weapons and the type of weapon up to the | symbol
 data[0] = re.sub(r'\[.+?\|', '', data[0])
    
 # Removes the trailing bracket symbols
 data[0] = re.sub(r'\]\]', '', data[0])
-data[17] = re.sub(r'\]\]', '', data[17])
 data[18] = re.sub(r'\]\]', '', data[18])
+data[19] = re.sub(r'\]\]', '', data[19])
 
 # Removes the leading bracket symbols
-data[17] = re.sub(r'\[\[', '', data[17])
 data[18] = re.sub(r'\[\[', '', data[18])
+data[19] = re.sub(r'\[\[', '', data[19])
 
 # Removes the leading | symbol
-data[10] = re.sub(r'\|', '', data[10])
 data[11] = re.sub(r'\|', '', data[11])
+data[12] = re.sub(r'\|', '', data[12])
 
 # Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
-data[15] = re.sub(r'<br/>', ' ', data[15])
-data.insert(15, data[15])
+data[16] = re.sub(r'<br/>', ' ', data[16])
+data.insert(16, data[16])
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[15] = re.sub(r'Vertical: ', '', data[15])
-data[15] = re.sub(r' Horizontal:....', '', data[15])
+data[16] = re.sub(r'Vertical: ', '', data[16])
+data[16] = re.sub(r' Horizontal:....', '', data[16])
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[16] = re.sub(r'Vertical:....', '', data[16])
-data[16] = re.sub(r' Horizontal: ', '', data[16])
+data[17] = re.sub(r'Vertical:.*?H', '', data[17])
+data[17] = re.sub(r'orizontal: ', '', data[17])
 
 # Removes the <br/> tag from this element
-data[9] = re.sub(r'<br/>', ', ', data[9])
+data[10] = re.sub(r'<br/>', ', ', data[10])
 
 # Removes the | symbol
-data[9] = re.sub(r'\|', '', data[9])
+data[10] = re.sub(r'\|', '', data[10])
 
 # Initialize an empty list
 weaponList = []
@@ -436,7 +453,11 @@ for i in range(len(data)):
     else:
         weaponList.append(0)
      
-weaponDF[gunName] = weaponList                     
+# Store new gun in second dataframe    
+weaponDF2 = pd.DataFrame([weaponList], columns = colmns)              
+
+# Append df2 to original df
+weaponDF = weaponDF.append(weaponDF2)
 
 #print(weaponDF.iloc[1,:])
 
@@ -487,39 +508,42 @@ if re.match(r'\|Single', data[7]):
 if re.match(r'\|Single', data[8]):
     data.insert(6, 0)
     
+# Add weapon name as position 2
+data.insert(2, gunName)
+
 # Removes weapons and the type of weapon up to the | symbol
 data[0] = re.sub(r'\[.+?\|', '', data[0])
    
 # Removes the trailing bracket symbols
 data[0] = re.sub(r'\]\]', '', data[0])
-data[17] = re.sub(r'\]\]', '', data[17])
 data[18] = re.sub(r'\]\]', '', data[18])
+data[19] = re.sub(r'\]\]', '', data[19])
 
 # Removes the leading bracket symbols
-data[17] = re.sub(r'\[\[', '', data[17])
 data[18] = re.sub(r'\[\[', '', data[18])
+data[19] = re.sub(r'\[\[', '', data[19])
 
 # Removes the leading | symbol
-data[10] = re.sub(r'\|', '', data[10])
 data[11] = re.sub(r'\|', '', data[11])
+data[12] = re.sub(r'\|', '', data[12])
 
 # Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
-data[15] = re.sub(r'<br/>', ' ', data[15])
-data.insert(15, data[15])
+data[16] = re.sub(r'<br/>', ' ', data[16])
+data.insert(16, data[16])
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[15] = re.sub(r'Vertical: ', '', data[15])
-data[15] = re.sub(r' Horizontal:....', '', data[15])
+data[16] = re.sub(r'Vertical: ', '', data[16])
+data[16] = re.sub(r' Horizontal:....', '', data[16])
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[16] = re.sub(r'Vertical:.*?H', '', data[16])
-data[16] = re.sub(r'orizontal: ', '', data[16])
+data[17] = re.sub(r'Vertical:.*?H', '', data[17])
+data[17] = re.sub(r'orizontal: ', '', data[17])
 
 # Removes the <br/> tag from this element
-data[9] = re.sub(r'<br/>', ', ', data[9])
+data[10] = re.sub(r'<br/>', ', ', data[10])
 
 # Removes the | symbol
-data[9] = re.sub(r'\|', '', data[9])
+data[10] = re.sub(r'\|', '', data[10])
 
 # Initialize an empty list
 weaponList = []
@@ -532,7 +556,11 @@ for i in range(len(data)):
     else:
         weaponList.append(0)
      
-weaponDF[gunName] = weaponList                     
+# Store new gun in second dataframe    
+weaponDF2 = pd.DataFrame([weaponList], columns = colmns)              
+
+# Append df2 to original df
+weaponDF = weaponDF.append(weaponDF2)
 
 #print(weaponDF.iloc[1,:])
 
@@ -583,42 +611,42 @@ if re.match(r'\|Single', data[7]):
 if re.match(r'\|Single', data[8]):
     data.insert(6, 0)
     
-# Removes weapons and the type of weapon up to the | symbol
-data[0] = re.sub(r'\[.+?\|', '', data[0])
-   
+# Add weapon name as position 2
+data.insert(2, gunName)
+
 # Removes weapons and the type of weapon up to the | symbol
 data[0] = re.sub(r'\[.+?\|', '', data[0])
    
 # Removes the trailing bracket symbols
 data[0] = re.sub(r'\]\]', '', data[0])
-data[17] = re.sub(r'\]\]', '', data[17])
 data[18] = re.sub(r'\]\]', '', data[18])
+data[19] = re.sub(r'\]\]', '', data[19])
 
 # Removes the leading bracket symbols
-data[17] = re.sub(r'\[\[', '', data[17])
 data[18] = re.sub(r'\[\[', '', data[18])
+data[19] = re.sub(r'\[\[', '', data[19])
 
 # Removes the leading | symbol
-data[10] = re.sub(r'\|', '', data[10])
 data[11] = re.sub(r'\|', '', data[11])
+data[12] = re.sub(r'\|', '', data[12])
 
 # Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
-data[15] = re.sub(r'<br/>', ' ', data[15])
-data.insert(15, data[15])
+data[16] = re.sub(r'<br/>', ' ', data[16])
+data.insert(16, data[16])
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[15] = re.sub(r'Vertical: ', '', data[15])
-data[15] = re.sub(r' Horizontal:....', '', data[15])
+data[16] = re.sub(r'Vertical: ', '', data[16])
+data[16] = re.sub(r' Horizontal:....', '', data[16])
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[16] = re.sub(r'Vertical:....', '', data[16])
-data[16] = re.sub(r' Horizontal: ', '', data[16])
+data[17] = re.sub(r'Vertical:.*?H', '', data[17])
+data[17] = re.sub(r'orizontal: ', '', data[17])
 
 # Removes the <br/> tag from this element
-data[9] = re.sub(r'<br/>', ', ', data[9])
+data[10] = re.sub(r'<br/>', ', ', data[10])
 
 # Removes the | symbol
-data[9] = re.sub(r'\|', '', data[9])
+data[10] = re.sub(r'\|', '', data[10])
 
 # Initialize an empty list
 weaponList = []
@@ -631,13 +659,114 @@ for i in range(len(data)):
     else:
         weaponList.append(0)
      
-weaponDF[gunName] = weaponList                     
+# Store new gun in second dataframe    
+weaponDF2 = pd.DataFrame([weaponList], columns = colmns)              
 
-print(weaponDF.iloc[15,:])
+# Append df2 to original df
+weaponDF = weaponDF.append(weaponDF2)
 
 #####
 # End gun 6
 #####
+
+###################################
+
+# Creates a function that converts the item type to the database number
+def itemTypeId(row):
+    if row['itemTypeId'] == 'Assault rifle':
+        return 1
+    elif row['itemTypeId'] == 'Assault carbine':
+        return 2
+    elif row['itemTypeId'] == 'Light machine gun':
+        return 3
+    elif row['itemTypeId'] == 'Submachine gun':
+        return 4
+    elif row['itemTypeId'] == 'Shotgun':
+        return 5
+    elif row['itemTypeId'] == 'Designated marksman rifle':
+        return 6
+    elif row['itemTypeId'] == 'Sniper rifle':
+        return 7
+    elif row['itemTypeId'] == 'Pistol':
+        return 8
+    elif row['itemTypeId'] == 'Melee weapon':
+        return 9
+    elif row['itemTypeId'] == 'Fragmentation grenade':
+        return 10
+    elif row['itemTypeId'] == 'Smoke grenade':
+        return 11
+    elif row['itemTypeId'] == 'Stun grenade':
+        return 12
+    elif row['itemTypeId'] == 'Mask':
+        return 13
+    elif row['itemTypeId'] == 'Armor vest':
+        return 14
+    elif row['itemTypeId'] == 'Helmet':
+        return 15
+    elif row['itemTypeId'] == 'Armored chest rig':
+        return 16
+    elif row['itemTypeId'] == 'Chest rig':
+        return 17
+    elif row['itemTypeId'] == 'Night vision':
+        return 18
+    elif row['itemTypeId'] == 'Goggles':
+        return 19
+    elif row['itemTypeId'] == 'Backpack':
+        return 20
+    
+# Apply the function across the type column on all rows
+weaponDF['itemTypeId'] = weaponDF.apply(itemTypeId, axis=1)
+
+def slotId(row):
+    if row['slotId'] == "Primary":
+        return 1
+    elif row['slotId'] == "Secondary":
+        return 2
+    elif row['slotId'] == "Melee":
+        return 3
+    elif row['slotId'] == "Headwear":
+        return 4
+    elif row['slotId'] == "Earpiece":
+        return 5
+    elif row['slotId'] == "Face Cover":
+        return 6
+    elif row['slotId'] == "Body Armor":
+        return 7
+    elif row['slotId'] == "Armband":
+        return 8
+    elif row['slotId'] == "Eyewear":
+        return 9
+    elif row['slotId'] == "Chest Rig":
+        return 10
+    elif row['slotId'] == "Backpack":
+        return 11
+
+# Apply slotID across the DF
+weaponDF['slotId'] = weaponDF.apply(slotId, axis=1)
+
+# Create new column for DEFAULT across all rows. Allows the auto increment in the database to function properly
+#weaponDF['Default'] = str('DEFAULT')
+
+# Grab column names
+#cols = weaponDF.columns.tolist()
+
+# Move the last column to the first position
+#cols = cols[-1:] + cols[:-1]
+
+# rebuild the df from the new cols list
+#weaponDF = weaponDF[cols]
+
+# print column 0 all rows
+print(weaponDF.iloc[1,:])
+
+# create dictionary from df
+#weaponDict = weaponDF.to_dict('split')
+
+# Store data types for the dataframe
+#dtypeCount =[weaponDF.iloc[:,i].apply(type).value_counts() for i in range(weaponDF.shape[1])]
+
+# access the data types
+#dtypeCount
 
 ###############################
 # All primary weapons
