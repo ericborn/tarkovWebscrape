@@ -27,6 +27,14 @@ data extracted for the category and index positions
 #18 default ammo
 #19 default mag
 =============================================================================
+
+Create a mapping for item type and slot to an int for the slot and itemType tables
+
+pull out recoil vertical and horizontal into individual items
+
+mapping for tradersId to name
+
+
 """
 import requests
 from bs4 import BeautifulSoup as bs
@@ -41,8 +49,8 @@ numbers = [0, 1, 2, 3, 9, 10, 11, 12, 13, 15, 16, 17, 18]
 
 #Initalize category list
 category = {'Category':['Type','Slot','Weight','Grid size','Price','Trader','Op Res','Rarity','Repair','Fire Modes',
-                        'Sighting range','Ergonomics','Muzzle velocity','Effective distance','Accuracy','Recoil',
-                        'Rate of fire (RPM)','Caliber','Default ammo','Default mag']}
+                        'Sighting range','Ergonomics','Muzzle velocity','Effective distance','Accuracy','Vertical Recoil',
+                        'Horizontal Recoil','Rate of fire (RPM)','Caliber','Default ammo','Default mag']}
 
 # Create empty list to store the weapon data
 weaponList = []
@@ -113,8 +121,17 @@ data[18] = re.sub(r'\[\[', '', data[18])
 data[10] = re.sub(r'\|', '', data[10])
 data[11] = re.sub(r'\|', '', data[11])
 
-# Removes the <br/> tag from this element
-data[15] = re.sub(r'<br/>', ', ', data[15])
+# Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
+data[15] = re.sub(r'<br/>', ' ', data[15])
+data.insert(15, data[15])
+
+# Removes vertical from the start and horizontal from the end just leaving the numbers
+data[15] = re.sub(r'Vertical: ', '', data[15])
+data[15] = re.sub(r' Horizontal:....', '', data[15])
+
+# Removes vertical from the start and horizontal from the end just leaving the numbers
+data[16] = re.sub(r'Vertical:.*?H', '', data[16])
+data[16] = re.sub(r'orizontal: ', '', data[16])
 
 # Removes the <br/> tag from this element
 data[9] = re.sub(r'<br/>', ', ', data[9])
@@ -196,17 +213,27 @@ data[18] = re.sub(r'\]\]', '', data[18])
 data[17] = re.sub(r'\[\[', '', data[17])
 data[18] = re.sub(r'\[\[', '', data[18])
 
-# Removes the leading | symbol from 9, 10, 11
-data[9] = re.sub(r'\|', '', data[9])
+# Removes the leading | symbol
 data[10] = re.sub(r'\|', '', data[10])
 data[11] = re.sub(r'\|', '', data[11])
 
-# Removes the <br/> tag from this element
-data[15] = re.sub(r'<br/>', ', ', data[15])
+# Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
+data[15] = re.sub(r'<br/>', ' ', data[15])
+data.insert(15, data[15])
+
+# Removes vertical from the start and horizontal from the end just leaving the numbers
+data[15] = re.sub(r'Vertical: ', '', data[15])
+data[15] = re.sub(r' Horizontal:....', '', data[15])
+
+# Removes vertical from the start and horizontal from the end just leaving the numbers
+data[16] = re.sub(r'Vertical:....', '', data[16])
+data[16] = re.sub(r' Horizontal: ', '', data[16])
 
 # Removes the <br/> tag from this element
 data[9] = re.sub(r'<br/>', ', ', data[9])
 
+# Removes the | symbol
+data[9] = re.sub(r'\|', '', data[9])
 
 # Initialize an empty list
 weaponList = []
@@ -282,16 +309,27 @@ data[18] = re.sub(r'\]\]', '', data[18])
 data[17] = re.sub(r'\[\[', '', data[17])
 data[18] = re.sub(r'\[\[', '', data[18])
 
-# Removes the leading | symbol from 9, 10, 11
-data[9] = re.sub(r'\|', '', data[9])
+# Removes the leading | symbol
 data[10] = re.sub(r'\|', '', data[10])
 data[11] = re.sub(r'\|', '', data[11])
 
-# Removes the <br/> tag from this element
-data[15] = re.sub(r'<br/>', ', ', data[15])
+# Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
+data[15] = re.sub(r'<br/>', ' ', data[15])
+data.insert(15, data[15])
+
+# Removes vertical from the start and horizontal from the end just leaving the numbers
+data[15] = re.sub(r'Vertical: ', '', data[15])
+data[15] = re.sub(r' Horizontal:....', '', data[15])
+
+# Removes vertical from the start and horizontal from the end just leaving the numbers
+data[16] = re.sub(r'Vertical:....', '', data[16])
+data[16] = re.sub(r' Horizontal: ', '', data[16])
 
 # Removes the <br/> tag from this element
 data[9] = re.sub(r'<br/>', ', ', data[9])
+
+# Removes the | symbol
+data[9] = re.sub(r'\|', '', data[9])
 
 # Initialize an empty list
 weaponList = []
@@ -365,17 +403,27 @@ data[18] = re.sub(r'\]\]', '', data[18])
 data[17] = re.sub(r'\[\[', '', data[17])
 data[18] = re.sub(r'\[\[', '', data[18])
 
-# Removes the leading | symbol from 9, 10, 11
-data[9] = re.sub(r'\|', '', data[9])
+# Removes the leading | symbol
 data[10] = re.sub(r'\|', '', data[10])
 data[11] = re.sub(r'\|', '', data[11])
 
-# Removes the <br/> tag from this element
-data[15] = re.sub(r'<br/>', ', ', data[15])
+# Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
+data[15] = re.sub(r'<br/>', ' ', data[15])
+data.insert(15, data[15])
+
+# Removes vertical from the start and horizontal from the end just leaving the numbers
+data[15] = re.sub(r'Vertical: ', '', data[15])
+data[15] = re.sub(r' Horizontal:....', '', data[15])
+
+# Removes vertical from the start and horizontal from the end just leaving the numbers
+data[16] = re.sub(r'Vertical:....', '', data[16])
+data[16] = re.sub(r' Horizontal: ', '', data[16])
 
 # Removes the <br/> tag from this element
 data[9] = re.sub(r'<br/>', ', ', data[9])
 
+# Removes the | symbol
+data[9] = re.sub(r'\|', '', data[9])
 
 # Initialize an empty list
 weaponList = []
@@ -451,17 +499,27 @@ data[18] = re.sub(r'\]\]', '', data[18])
 data[17] = re.sub(r'\[\[', '', data[17])
 data[18] = re.sub(r'\[\[', '', data[18])
 
-# Removes the leading | symbol from 9, 10, 11
-data[9] = re.sub(r'\|', '', data[9])
+# Removes the leading | symbol
 data[10] = re.sub(r'\|', '', data[10])
 data[11] = re.sub(r'\|', '', data[11])
 
-# Removes the <br/> tag from this element
-data[15] = re.sub(r'<br/>', ', ', data[15])
+# Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
+data[15] = re.sub(r'<br/>', ' ', data[15])
+data.insert(15, data[15])
+
+# Removes vertical from the start and horizontal from the end just leaving the numbers
+data[15] = re.sub(r'Vertical: ', '', data[15])
+data[15] = re.sub(r' Horizontal:....', '', data[15])
+
+# Removes vertical from the start and horizontal from the end just leaving the numbers
+data[16] = re.sub(r'Vertical:.*?H', '', data[16])
+data[16] = re.sub(r'orizontal: ', '', data[16])
 
 # Removes the <br/> tag from this element
 data[9] = re.sub(r'<br/>', ', ', data[9])
 
+# Removes the | symbol
+data[9] = re.sub(r'\|', '', data[9])
 
 # Initialize an empty list
 weaponList = []
@@ -528,6 +586,9 @@ if re.match(r'\|Single', data[8]):
 # Removes weapons and the type of weapon up to the | symbol
 data[0] = re.sub(r'\[.+?\|', '', data[0])
    
+# Removes weapons and the type of weapon up to the | symbol
+data[0] = re.sub(r'\[.+?\|', '', data[0])
+   
 # Removes the trailing bracket symbols
 data[0] = re.sub(r'\]\]', '', data[0])
 data[17] = re.sub(r'\]\]', '', data[17])
@@ -537,17 +598,27 @@ data[18] = re.sub(r'\]\]', '', data[18])
 data[17] = re.sub(r'\[\[', '', data[17])
 data[18] = re.sub(r'\[\[', '', data[18])
 
-# Removes the leading | symbol from 9, 10, 11
-data[9] = re.sub(r'\|', '', data[9])
+# Removes the leading | symbol
 data[10] = re.sub(r'\|', '', data[10])
 data[11] = re.sub(r'\|', '', data[11])
 
-# Removes the <br/> tag from this element
-data[15] = re.sub(r'<br/>', ', ', data[15])
+# Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
+data[15] = re.sub(r'<br/>', ' ', data[15])
+data.insert(15, data[15])
+
+# Removes vertical from the start and horizontal from the end just leaving the numbers
+data[15] = re.sub(r'Vertical: ', '', data[15])
+data[15] = re.sub(r' Horizontal:....', '', data[15])
+
+# Removes vertical from the start and horizontal from the end just leaving the numbers
+data[16] = re.sub(r'Vertical:....', '', data[16])
+data[16] = re.sub(r' Horizontal: ', '', data[16])
 
 # Removes the <br/> tag from this element
 data[9] = re.sub(r'<br/>', ', ', data[9])
 
+# Removes the | symbol
+data[9] = re.sub(r'\|', '', data[9])
 
 # Initialize an empty list
 weaponList = []
@@ -562,11 +633,11 @@ for i in range(len(data)):
      
 weaponDF[gunName] = weaponList                     
 
-print(weaponDF.iloc[18,:])
+print(weaponDF.iloc[15,:])
 
 #####
 # End gun 6
-##### 
+#####
 
 ###############################
 # All primary weapons
