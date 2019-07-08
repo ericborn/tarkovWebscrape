@@ -48,9 +48,9 @@ import re
 numbers = [0, 1, 2, 3, 4, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20]
 
 #Initalize category list
-colmns = ['itemTypeId','slotId','name','weight','gridSize','price','traderId','opRes','rarity','repair','fireModes',
-           'sightingRange','ergonomics','muzzleVelocity','effectiveDistance','accuracy','recoilVert',
-           'recoilHoriz','rpm','caliber','defaultAmmo','defaultMag']
+colmns = ['itemtypeid','slotid','name','weight','gridsize','price','traderid','opres','rarity','repair','firemodes',
+           'sightingrange','ergo','muzzlevelocity','effectivedistance','accuracy','recoilvert',
+           'recoilhoriz','rpm','caliber','defaultammo','defaultmag']
 
 # Convert the categories into a dataframe 
 #weaponDF = pd.DataFrame(columns)
@@ -673,76 +673,76 @@ weaponDF = weaponDF.append(weaponDF2)
 
 # Creates a function that converts the item type to the database number
 def itemTypeId(row):
-    if row['itemTypeId'] == 'Assault rifle':
+    if row['itemtypeid'] == 'Assault rifle':
         return 1
-    elif row['itemTypeId'] == 'Assault carbine':
+    elif row['itemtypeid'] == 'Assault carbine':
         return 2
-    elif row['itemTypeId'] == 'Light machine gun':
+    elif row['itemtypeid'] == 'Light machine gun':
         return 3
-    elif row['itemTypeId'] == 'Submachine gun':
+    elif row['itemtypeid'] == 'Submachine gun':
         return 4
-    elif row['itemTypeId'] == 'Shotgun':
+    elif row['itemtypeid'] == 'Shotgun':
         return 5
-    elif row['itemTypeId'] == 'Designated marksman rifle':
+    elif row['itemtypeid'] == 'Designated marksman rifle':
         return 6
-    elif row['itemTypeId'] == 'Sniper rifle':
+    elif row['itemtypeid'] == 'Sniper rifle':
         return 7
-    elif row['itemTypeId'] == 'Pistol':
+    elif row['itemtypeid'] == 'Pistol':
         return 8
-    elif row['itemTypeId'] == 'Melee weapon':
+    elif row['itemtypeid'] == 'Melee weapon':
         return 9
-    elif row['itemTypeId'] == 'Fragmentation grenade':
+    elif row['itemtypeid'] == 'Fragmentation grenade':
         return 10
-    elif row['itemTypeId'] == 'Smoke grenade':
+    elif row['itemtypeid'] == 'Smoke grenade':
         return 11
-    elif row['itemTypeId'] == 'Stun grenade':
+    elif row['itemtypeid'] == 'Stun grenade':
         return 12
-    elif row['itemTypeId'] == 'Mask':
+    elif row['itemtypeid'] == 'Mask':
         return 13
-    elif row['itemTypeId'] == 'Armor vest':
+    elif row['itemtypeid'] == 'Armor vest':
         return 14
-    elif row['itemTypeId'] == 'Helmet':
+    elif row['itemtypeid'] == 'Helmet':
         return 15
-    elif row['itemTypeId'] == 'Armored chest rig':
+    elif row['itemtypeid'] == 'Armored chest rig':
         return 16
-    elif row['itemTypeId'] == 'Chest rig':
+    elif row['itemtypeid'] == 'Chest rig':
         return 17
-    elif row['itemTypeId'] == 'Night vision':
+    elif row['itemtypeid'] == 'Night vision':
         return 18
-    elif row['itemTypeId'] == 'Goggles':
+    elif row['itemtypeid'] == 'Goggles':
         return 19
-    elif row['itemTypeId'] == 'Backpack':
+    elif row['itemtypeid'] == 'Backpack':
         return 20
     
 # Apply the function across the type column on all rows
-weaponDF['itemTypeId'] = weaponDF.apply(itemTypeId, axis=1)
+weaponDF['itemtypeid'] = weaponDF.apply(itemTypeId, axis=1)
 
 def slotId(row):
-    if row['slotId'] == "Primary":
+    if row['slotid'] == "Primary":
         return 1
-    elif row['slotId'] == "Secondary":
+    elif row['slotid'] == "Secondary":
         return 2
-    elif row['slotId'] == "Melee":
+    elif row['slotid'] == "Melee":
         return 3
-    elif row['slotId'] == "Headwear":
+    elif row['slotid'] == "Headwear":
         return 4
-    elif row['slotId'] == "Earpiece":
+    elif row['slotid'] == "Earpiece":
         return 5
-    elif row['slotId'] == "Face Cover":
+    elif row['slotid'] == "Face Cover":
         return 6
-    elif row['slotId'] == "Body Armor":
+    elif row['slotid'] == "Body Armor":
         return 7
-    elif row['slotId'] == "Armband":
+    elif row['slotid'] == "Armband":
         return 8
-    elif row['slotId'] == "Eyewear":
+    elif row['slotid'] == "Eyewear":
         return 9
-    elif row['slotId'] == "Chest Rig":
+    elif row['slotid'] == "Chest Rig":
         return 10
-    elif row['slotId'] == "Backpack":
+    elif row['slotid'] == "Backpack":
         return 11
 
 # Apply slotID across the DF
-weaponDF['slotId'] = weaponDF.apply(slotId, axis=1)
+weaponDF['slotid'] = weaponDF.apply(slotId, axis=1)
 
 # Create new column for DEFAULT across all rows. Allows the auto increment in the database to function properly
 #weaponDF['Default'] = str('DEFAULT')
@@ -757,7 +757,11 @@ weaponDF['slotId'] = weaponDF.apply(slotId, axis=1)
 #weaponDF = weaponDF[cols]
 
 # print column 0 all rows
-print(weaponDF.iloc[1,:])
+print(weaponDF.iloc[0,:])
+
+#weaponDF.to_csv(r'd:\test.csv')
+
+#weaponDF.head
 
 # create dictionary from df
 #weaponDict = weaponDF.to_dict('split')
@@ -767,6 +771,111 @@ print(weaponDF.iloc[1,:])
 
 # access the data types
 #dtypeCount
+
+type(weaponDF.iloc[0,1])
+
+weaponDF.dtypes
+
+# Chance price to object instead of int due to currency 
+weaponDF = weaponDF.astype({'price': object, })
+
+# Change columns to numeric instead of object
+weaponDF['sightingrange'] = pd.to_numeric(weaponDF['sightingrange'])
+weaponDF['ergo'] = pd.to_numeric(weaponDF['ergo'])
+weaponDF['recoilvert'] = pd.to_numeric(weaponDF['recoilvert'])
+weaponDF['recoilhoriz'] = pd.to_numeric(weaponDF['recoilhoriz'])
+weaponDF['rpm'] = pd.to_numeric(weaponDF['rpm'])
+
+
+
+###############################
+# SQL
+#############
+
+from sqlalchemy import create_engine, MetaData, insert, Table, Column, String, Integer, Float, Boolean, VARCHAR, SmallInteger
+import psycopg2
+import io
+
+meta = MetaData()
+
+# Creates a connection string
+engine = create_engine('postgresql+psycopg2://TomBrody:pass@localhost/tarkov')
+
+# Creates a table using the column names and datatypes defined in the dataframe
+weaponDF.head(0).to_sql('weaponproperties', engine, if_exists = 'replace', index = False)
+
+# raw connection
+conn = engine.raw_connection()
+
+# Opens a cursor to write the data
+cur = conn.cursor()
+
+# prepares an in memory IO stream
+output = io.StringIO()
+
+# converts the dataframe contents to csv format and the IO steam as its destination
+weaponDF.to_csv(output, sep='\t', header=False, index=False)
+
+# sets the file offset position to 0
+output.seek(0)
+
+# retrieves the contents of the output stream
+contents = output.getvalue()
+
+# Copys from the stream to the weaponproperties table
+cur.copy_from(output, 'weaponproperties', null="") # null values become ''
+
+# Commits on the connection to the database
+conn.commit()
+
+
+# Automatically reflects the database table and stores the column types and details
+# weaponProperties = Table('weaponproperties', meta, autoload = True, autoload_with = engine)
+
+# Revises table/column details to drop the weaponId column which is auto generated by postgres
+weaponProperties = Table('weaponproperties', meta,
+                         Column('itemtypeid', SmallInteger(), nullable=False),
+                         Column('slotid', SmallInteger(), nullable=False), 
+                         Column('name', VARCHAR(length=50)), 
+                         Column('weight', VARCHAR(length=10)), 
+                         Column('gridsize', VARCHAR(length=10)), 
+                         Column('price', VARCHAR(length=5)), 
+                         Column('traderid', SmallInteger()), 
+                         Column('opres', SmallInteger), 
+                         Column('rarity', SmallInteger), 
+                         Column('repair', SmallInteger), 
+                         Column('firemodes', VARCHAR(length=50)), 
+                         Column('sightingrange', SmallInteger()), 
+                         Column('ergo', SmallInteger()),
+                         Column('muzzlevelocity', VARCHAR(length=10)), 
+                         Column('effectivedistance', VARCHAR(length=6)), 
+                         Column('accuracy', SmallInteger()), 
+                         Column('recoilvert', SmallInteger()), 
+                         Column('recoilhoriz', SmallInteger()), 
+                         Column('rpm', SmallInteger()), 
+                         Column('caliber', VARCHAR(length=30)), 
+                         Column('defaultammo', VARCHAR(length=50)), 
+                         Column('defaultmag', VARCHAR(length=50)), schema=None)
+
+#res = engine.execute('SELECT * FROM weaponProperties;').fetchall()
+
+# Selects all tables in the db
+#print(engine.table_names())
+
+# Maps out the insert statement
+ins = weaponProperties.insert()
+
+str(ins)
+
+weaponDF.to_sql(weaponProperties, con = engine, if_exists = 'append', index = False)
+
+#print(weaponDF.iloc[1,:])
+
+
+#result = table.update().returning()
+
+#stmt = insert(weaponProperties('weaponProperties'))
+
 
 ###############################
 # All primary weapons

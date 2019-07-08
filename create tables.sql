@@ -102,35 +102,6 @@ CREATE INDEX "fkIdx_305" ON "public"."armorProperties"
  "traderId"
 );
 
---drop table public.weaponProperties
--- ************************************** "public"."weaponProperties"
-CREATE TABLE public.weaponProperties
-(
- "weaponId"      		smallint NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
- "itemTypeId"	 		smallint NOT NULL,
- "slotId"        		smallint NOT NULL,
- "name"					varchar(50),
- "weight"        		varchar(10),
- "gridSize"      		varchar(10),
- "price"      	 		varchar(5),
- "traderId"      		smallint,
- "opRes"    			varchar(1),
- "rarity"       		varchar(1),
- "repair" 		 		varchar(10),
- "fireModes"     		varchar(50),
- "sightingRange"      	smallint,
- "ergo"       			smallint,
- "muzzleVelocity"       varchar(10),
- "effectiveDistance"    varchar(6),
- "accuracy"      		varchar(1),
- "recoilvert"     		smallint,
- "recoilHoriz"     		smallint,
- "rpm"    				smallint,
- "caliber"        		varchar(30),
- "defaultAmmo"        	varchar(50),
- "defaultmag"			varchar(50)
-);
-
 --drop table slot
 CREATE TABLE slot
 (
@@ -157,4 +128,66 @@ VALUES('Assault rifle'),('Assault carbine'),('Light machine gun'),('Submachine g
 ('Chest rig'),('Night vision'),('Goggles'),('Backpack');
 --,(''),(''),(''),(''),(''),(''),(''),(''),(''),(''),(''),('');
 
-SELECT * FROM itemType
+
+--drop table public.weaponProperties
+-- ************************************** "public"."weaponProperties"
+/*
+CREATE TABLE public.weaponProperties
+(
+ weaponId	      		smallint NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+ itemTypeId	 			smallint NOT NULL,
+ slotId        			smallint NOT NULL,
+ name					varchar(50),
+ weight     	   		varchar(10),
+ gridSize   	  		varchar(10),
+ price      	 		varchar(5),
+ traderId   	   		smallint,
+ opRes    				smallint,
+ rarity      	 		smallint,
+ repair 		 		smallint,
+ fireModes     			varchar(50),
+ sightingRange      	smallint,
+ ergo       			smallint,
+ muzzleVelocity   	    varchar(10),
+ effectiveDistance 	    varchar(6),
+ accuracy      			smallint,
+ recoilvert     		smallint,
+ recoilHoriz     		smallint,
+ rpm   					smallint,
+ caliber       			varchar(30),
+ defaultAmmo        	varchar(50),
+ defaultmag				varchar(50)
+);
+*/ 
+--truncate table weaponProperties
+/* --Copy data from csv
+COPY weaponProperties(itemTypeId,slotId,name,weight,gridSize,price,traderId,opRes,
+					  rarity,repair,fireModes,sightingRange,ergo,muzzleVelocity,effectiveDistance,
+					  accuracy,recoilVert,recoilHoriz,rpm,caliber,defaultAmmo,defaultMag)
+FROM 'd:\test.csv' DELIMITER ',' CSV HEADER;
+*/
+SELECT * FROM weaponProperties
+
+ALTER TABLE weaponproperties
+ALTER COLUMN itemtypeid 		TYPE smallint,
+ALTER COLUMN slotId 			TYPE smallint,
+ALTER COLUMN name				TYPE varchar(50),
+ALTER COLUMN weight   			TYPE varchar(10),
+ALTER COLUMN gridSize 			TYPE varchar(10),
+ALTER COLUMN price     			TYPE varchar(5),
+ALTER COLUMN traderId   		TYPE smallint,
+ALTER COLUMN opRes    			TYPE smallint,
+ALTER COLUMN rarity   			TYPE smallint,
+ALTER COLUMN repair 			TYPE smallint,
+ALTER COLUMN fireModes  		TYPE varchar(50),
+ALTER COLUMN sightingRange 		TYPE smallint,
+ALTER COLUMN ergo    			TYPE smallint,
+ALTER COLUMN muzzleVelocity 	TYPE varchar(10),
+ALTER COLUMN effectiveDistance 	TYPE varchar(6),
+ALTER COLUMN accuracy    		TYPE smallint,
+ALTER COLUMN recoilvert   		TYPE smallint,
+ALTER COLUMN recoilHoriz  		TYPE smallint,
+ALTER COLUMN rpm   				TYPE smallint,
+ALTER COLUMN caliber     		TYPE varchar(30),
+ALTER COLUMN defaultAmmo    	TYPE varchar(50),
+ALTER COLUMN defaultmag			TYPE varchar(50)
