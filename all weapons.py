@@ -64,16 +64,11 @@ for i in range(len(weapLinks)):
 ######
 # Start setup
 ######
-# Creates a number set that corresponds to the categorys we're actully pulling data in from
-numbers = [0, 1, 2, 3, 4, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20]
 
 #Initalize category list
 colmns = ['itemtypeid','slotid','name','weight','gridsize','price','traderid','opres','rarity','repair','firemodes',
            'sightingrange','ergo','muzzlevelocity','effectivedistance','accuracy','recoilvert',
            'recoilhoriz','rpm','caliber','defaultammo','defaultmag']
-
-# Convert the categories into a dataframe 
-#weaponDF = pd.DataFrame(columns)
 
 ######
 # End setup
@@ -135,24 +130,16 @@ for i in range(len(Links)):
 
     # Initialize an empty list
     weaponList = []
-    
-    # Use a loop to move the data into the list where a data element is present in the numbers list
-    # Otherwise include a 0
-    for i in range(len(data)):
-        if i in numbers:
-            weaponList.append(data[i])
-        else:
-            weaponList.append(0)
-         
+        
     #weaponDF[gunName] = weaponList   
     if len(weaponDF) > 0:
         # Store new gun in second dataframe    
-        weaponDF2 = pd.DataFrame([weaponList], columns = colmns)              
+        weaponDF2 = pd.DataFrame([data], columns = colmns)              
         
         # Append df2 to original df
         weaponDF = weaponDF.append(weaponDF2)      
     else:
-        weaponDF = pd.DataFrame([weaponList], columns = colmns)
+        weaponDF = pd.DataFrame([data], columns = colmns)
    
 ######
 # End dataframe creation
@@ -179,20 +166,19 @@ weaponDF['firemodes'].replace(to_replace=r'\|', value = '', regex = True, inplac
 weaponDF['sightingrange'].replace(to_replace=r'\|', value = '', regex = True, inplace = True)
 weaponDF['ergo'].replace(to_replace=r'\|', value = '', regex = True, inplace = True)  
 
-# Removes vertical from the start and horizontal from the end just leaving the numbers
+# Removes vertical from the start and horizontal from the end just leaves the numbers
 weaponDF['recoilvert'].replace(to_replace=r'Vertical: ', value = '', regex = True, inplace = True)  
 weaponDF['recoilvert'].replace(to_replace=r' Horizontal:....', value = '', regex = True, inplace = True)
 
-# Removes vertical from the start and horizontal from the end just leaving the numbers
+# Removes vertical from the start and horizontal from the end just leaves the numbers
 weaponDF['recoilhoriz'].replace(to_replace=r'Vertical:.*?H', value = '', regex = True, inplace = True)  
 weaponDF['recoilhoriz'].replace(to_replace=r'orizontal: ', value = '', regex = True, inplace = True)
 
 # Removes the <br/> tag from this element
 weaponDF['firemodes'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
 
-
-#########!!!!!!!!!!!!!!! Need check for |caliber=9x19mm
-# Either on SMG or pistol 
+# Removes |caliber=9x19mm
+weaponDF['caliber'].replace(to_replace=r'\|.*?=', value = '', regex = True, inplace = True)
 
 
 ######
