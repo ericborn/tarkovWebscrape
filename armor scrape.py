@@ -27,26 +27,32 @@ import re
 #	15	blocks ear
 #	16	blocks eye
 #	17	blocks face
-#	18	slots
-#	19	name
+#	18	blocks headwear
+#	19	slots
+#	20	name
 
 armorCols = ['itemtypeid','slotid','weight','gridsize','price','traderid','rarity', 'material', 'armor', 'armorcoverage',
              'armorsegments', 'durability', 'ricochetchance', 'penalties','blocksarmor', 'blocksearpiece', 'blockseyewear', 
-             'blocksfacecover','slots','name']
-# armor
-#webpage = requests.get('https://escapefromtarkov.gamepedia.com/index.php?title=6B43_6A_Armor&action=edit')
+             'blocksfacecover','blocksheadwear','slots','name']
+# body armor
+#webpage = requests.get('https://escapefromtarkov.gamepedia.com/Armor_vests')
 
-# rig
-# webpage = requests.get('https://escapefromtarkov.gamepedia.com/index.php?title=BlackRock_chest_rig&action=edit')
-
-# armored rig
-#webpage = requests.get('https://escapefromtarkov.gamepedia.com/index.php?title=ANA_Tactical_M2_armored_rig&action=edit')
+# rigs
+# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Chest_rigs')
 
 # helmet
-#webpage = requests.get('https://escapefromtarkov.gamepedia.com/index.php?title=6B47_Helmet&action=edit')
+# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Helmet')
 
 # backpack
-#webpage = requests.get('https://escapefromtarkov.gamepedia.com/index.php?title=Scav_Backpack&action=edit')
+# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Backpacks')
+
+# Earpieces
+# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Earpieces')
+
+# Headwear
+# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Headwear')
+
+webpage = requests.get('https://escapefromtarkov.gamepedia.com/Armor_vests')
 
 # Decode the page
 webpageSrc = webpage.content.decode('utf-8')
@@ -54,93 +60,162 @@ webpageSrc = webpage.content.decode('utf-8')
 # conver the page to beautiful soup format
 soup = bs(webpageSrc, 'lxml')
 
-# Grab item name from the firstHeading
-itemName = soup.find('h1', id='firstHeading').text
+# Creates an empty list to store all weapon main view page links
+armorLinks = []
 
-# Remove editing from the start of the guns name
-itemName = re.sub('Editing ', '', itemName)
+# Store links in a list
+for i in soup.find_all("table",{"class":"wikitable sortable"}):
+    for link in i.find_all('a'):
+        #print(link.get('href'))
+        armorLinks.append(link.get('href'))
 
-# converts textarea to a string
-text = str(soup.textarea.contents[0])
+# Links are duplicated due to the icon and the text being indivdual links to each armor
+# converting to a set and back to a list makes them unique
+armorLinks = list(set(armorLinks))
 
-# splits on '|type' and only keeps the last indexed item by using -1
-text = text.split(r'|type', 1)[-1]
+# Initialize a list that will store the edit page URL
+fullLinks = []
 
-# splits on '|ammo' and only keeps the first indexed item by using 0
-text = text.split('\n|spawn', 1)[0]
+# Loops through each main weapon URL then finds the link to the edit source page and writes it to the fullLinks list
+# I put a sleep into the loop because I received a timeout error previously. Could be due to too many requests to the 
+# website or having a temporary connection issue.
+for i in range(len(armorLinks)):
+    armorCrawl = requests.get('https://escapefromtarkov.gamepedia.com' + armorLinks[i])
+    armorSrc = armorCrawl.content.decode('utf-8')
+    armorSoup = bs(armorSrc, 'lxml')
+    #time.sleep(1)
+    for link in armorSoup.find_all('a', accesskey = 'e'):
+        fullLinks.append('https://escapefromtarkov.gamepedia.com' + link.get('href'))
 
-# splits on '\n'
-data = text.split('\n')
 
-# Loop that removes characters relating to the categories of the data
-for i in range(len(data)):
-    #data[i] = re.sub(r'\|.*=', '', data[i])
-    data[i] = re.sub(r'.*=', '', data[i])
- 
-# Rig
-if re.match('\[\[Chest rigs\|Chest rig\]\]', data[0]):
-    data.insert(7, 0)
-    data.insert(10, 0)
-    data.insert(12, 0)
-    data.insert(15, 0)
-    data.insert(16, 0)
-    data.insert(17, 0)
+# Creates empty dataframe for the weapon stats
+armorDF = pd.DataFrame()
 
-# Armored chest rig
-if re.match(r'.*Armored chest rig.*', data[0]):   
-    data.insert(10, 0)
-    data.insert(12, 0)
-    data.insert(15, 0)
-    data.insert(16, 0)
-    data.insert(17, 0)
+#links = fullLinks[15:20]
+
+# Loops through the links parsing the webpage and storing the data as beautiful soup
+for i in range(len(fullLinks)):
+    #time.sleep(1)
+    webpage = requests.get(fullLinks[i])
+    webpageSrc = webpage.content.decode('utf-8')
+    soup = bs(webpageSrc, 'lxml')
+
+    # Grab item name from the firstHeading
+    itemName = soup.find('h1', id='firstHeading').text
     
-# helmet
-if re.match(r'\[\[Headwear\]\]', data[1]):
-    data.insert(14, 0)
+    # Remove editing from the start of the guns name
+    itemName = re.sub('Editing ', '', itemName)
     
-# armor
-if re.match(r'.*Armor vest.*', data[0]):
-    data.insert(12, 0)
-    data.insert(14, 0)
-    data.insert(15, 0)
-    data.insert(16, 0)
-    data.insert(17, 0)
+    # converts textarea to a string
+    text = str(soup.textarea.contents[0])
+    
+    # splits on '|type' and only keeps the last indexed item by using -1
+    text = text.split(r'|type', 1)[-1]
+    
+    # splits on '|ammo' and only keeps the first indexed item by using 0
+    text = text.split('\n|spawn', 1)[0]
+    
+    # splits on '\n'
+    data = text.split('\n')
+    
+    # Loop that removes characters relating to the categories of the data
+    for i in range(len(data)):
+        #data[i] = re.sub(r'\|.*=', '', data[i])
+        data[i] = re.sub(r'.*=', '', data[i])
+    
+    ########### Tactical Rig 
+    # Rig
+    if re.match('\[\[Chest rigs\|Chest rig\]\]', data[0]):
+        data.insert(7, 0)
+        data.insert(10, 0)
+        data.insert(12, 0)
+        data.insert(15, 0)
+        data.insert(16, 0)
+        data.insert(17, 0)
+        data.insert(18, 0)
+    
+    # Armored chest rig
+    if re.match(r'.*Armored chest rig.*', data[0]):   
+        data.insert(10, 0)
+        data.insert(12, 0)
+        data.insert(15, 0)
+        data.insert(16, 0)
+        data.insert(17, 0)
+        data.insert(18, 0)
+    
+    ########### Body    
+    # armor
+    if re.match(r'.*Armor vest.*', data[0]):
+        data.insert(10, 0)
+        data.insert(12, 0)
+        data.insert(14, 0)
+        data.insert(15, 0)
+        data.insert(16, 0)
+        data.insert(17, 0)
+        data.insert(18, 0)
+    
+    ########### Backpack
+    # Backpack
+    if re.match(r'.*Backpack.*', data[0]):    
+        data.insert(7, 0)
+        data.insert(10, 0)
+        data.insert(12, 0)
+        data.insert(14, 0)
+        data.insert(15, 0)
+        data.insert(16, 0)
+        data.insert(17, 0)
+        data.insert(18, 0)
+    
+    ########### Headwear
+    # helmet
+    if re.match(r'.*Helmet.*', data[0]):
+        data.insert(14, 0)
+        data.insert(18, 0)
+        
+    # Headmount
+    if re.match(r'.*Head Mount.*', data[0]):  
+        data.insert(10, 0)
+        data.insert(12, 0)
+        data.insert(14, 0)
+        data.insert(18, 0)
+          
+    # Headwear/hat
+    if re.match(r'.*Headwear.*', data[1]):  
+        data.insert(10, 0)
+        data.insert(12, 0)
+        data.insert(14, 0)
+        data.insert(15, 0)
+        data.insert(16, 0)
+        data.insert(17, 0)
+        data.insert(18, 0)
+    
+    ########### Earpiece
+    # headset
+    if re.match(r'.*Headset.*', data[0]):   
+        data.insert(7, 0)
+        data.insert(10, 0)
+        data.insert(12, 0)
+        data.insert(14, 0)
+        data.insert(15, 0)
+    
+    #data[0]
+    
+    # Add weapon name as position 20
+    data.insert(20, itemName)
 
-# Backpack
+    # checks if the dataframe already has any items in it. If it does it appends, if not it creates
+    if len(armorDF) > 0:
+        # Store new gun in second dataframe    
+        armorDF2 = pd.DataFrame([data], columns = armorCols)              
+        
+        # Append df2 to original df
+        armorDF = armorDF.append(armorDF2)      
+    else:
+        armorDF = pd.DataFrame([data], columns = armorCols)
 
-data[0]
 
-# Add weapon name as position 2
-data.insert(19, itemName)
+print(armorDF.iloc[0,:])
 
-testDF = pd.DataFrame([data], columns = armorCols)
+print(armorDF.iloc[:,20])
 
-testDF
-
-print(testDF.iloc[0,:])
-
-len(testDF)
-
-############
-# old method
-############
-
-# Initialize an empty list
-#testList = []
-
-# Use a loop to move the data into the list where a data element is present in the numbers list
-# Otherwise include a 0
-
-#len(colmns)
-#
-#for i in range(len(data)):
-#    if i in numbers:
-#        testList.append(data[i])
-#    else:
-#        testList.append(0)
-#     
-##weaponDF[gunName] = weaponList   
-#
-#testDF = pd.DataFrame([testList], columns = colmns)
- 
-
+len(armorDF)
