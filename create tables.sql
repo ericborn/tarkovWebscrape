@@ -168,6 +168,11 @@ FROM 'd:\test.csv' DELIMITER ',' CSV HEADER;
 */
 SELECT * FROM weaponProperties
 
+-- Fix an issue with the default ammo type on two shotguns
+UPDATE weaponproperties
+SET defaultammo = '12x70 Buckshot'
+WHERE defaultammo LIKE '%560d5e524bdc2d25448b4571%'
+
 ALTER TABLE weaponproperties
 ALTER COLUMN itemtypeid 		TYPE smallint,
 ALTER COLUMN slotId 			TYPE smallint,
@@ -180,14 +185,14 @@ ALTER COLUMN opRes    			TYPE smallint,
 ALTER COLUMN rarity   			TYPE smallint,
 ALTER COLUMN repair 			TYPE smallint,
 ALTER COLUMN fireModes  		TYPE varchar(50),
-ALTER COLUMN sightingRange 		TYPE smallint,
-ALTER COLUMN ergo    			TYPE smallint,
+ALTER COLUMN sightingRange 		TYPE smallint USING (sightingRange::smallint),
+ALTER COLUMN ergo    			TYPE smallint USING (ergo::smallint),
 ALTER COLUMN muzzleVelocity 	TYPE varchar(10),
 ALTER COLUMN effectiveDistance 	TYPE varchar(6),
 ALTER COLUMN accuracy    		TYPE smallint,
-ALTER COLUMN recoilvert   		TYPE smallint,
-ALTER COLUMN recoilHoriz  		TYPE smallint,
-ALTER COLUMN rpm   				TYPE smallint,
+ALTER COLUMN recoilvert   		TYPE smallint USING (recoilvert::smallint),
+ALTER COLUMN recoilHoriz  		TYPE smallint USING (recoilHoriz::smallint),
+ALTER COLUMN rpm   				TYPE smallint USING (rpm::smallint),
 ALTER COLUMN caliber     		TYPE varchar(30),
 ALTER COLUMN defaultAmmo    	TYPE varchar(50),
 ALTER COLUMN defaultmag			TYPE varchar(50)

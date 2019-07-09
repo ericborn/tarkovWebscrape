@@ -44,62 +44,22 @@ for link in soup.find_all('a', class_ = "mw-redirect"):
 fullLinks = []
 
 # Loops through each main weapon URL then finds the link to the edit source page and writes it to the fullLinks list
-# Put a sleep into the loop because I received a timeout error previously. Could be due to too many requests to the 
-# website or having a connection issue.
+# I put a sleep into the loop because I received a timeout error previously. Could be due to too many requests to the 
+# website or having a temporary connection issue.
 for i in range(len(weapLinks)):
     weapCrawl = requests.get('https://escapefromtarkov.gamepedia.com' + weapLinks[i])
     weapSrc = weapCrawl.content.decode('utf-8')
     weapSoup = bs(weapSrc, 'lxml')
-    time.sleep(1)
+    time.sleep(0.5)
     for link in weapSoup.find_all('a', accesskey = 'e'):
         fullLinks.append('https://escapefromtarkov.gamepedia.com' + link.get('href'))
 
-fullLinks 
-    
-  
-# Removes / symbol before each link
-#for link in range(len(WeapLinks)):
-#   WeapLinks[link] = re.sub(r'/', '', WeapLinks[link])
+# Output all edit page links
+#fullLinks
 
-#!!!!!!!!!!!! BREAKS LINKS !!!!!!!!!!!!!
-# Replaces all % symbols with a quote "
-#for link in range(len(WeapLinks)):
-#    WeapLinks[link] = re.sub(r'%', '"', WeapLinks[link])    
-    
-    
-    
-    
-    
-    
-testcrawl = requests.get('https://escapefromtarkov.gamepedia.com' + WeapLinks[125])
-testSrc = testcrawl.content.decode('utf-8')
-testSoup = bs(testSrc, 'lxml')
-
-for link in testSoup.find_all('a', accesskey = 'e'):
-    print('https://escapefromtarkov.gamepedia.com' + link.get('href'))
-
-
-
-
-
-
-testLinks = 
-
-WeapLinks[0] = re.sub(r'/', '', WeapLinks[0])
-
-
-    
-for link in soup.find_all('a', class_ = "mw-redirect"):
-    #print(link.get('href'))
-    WeapLinks.append('https://escapefromtarkov.gamepedia.com/index.php?title=' + link.get('href') + '&action=edit')    
-    
-    
-    
-WeapLinks[125]
-
-###############################
+######
 # Weapons links End
-###############################
+######
 
 ######
 # Start setup
@@ -119,113 +79,254 @@ colmns = ['itemtypeid','slotid','name','weight','gridsize','price','traderid','o
 # End setup
 ######
 
-#####
-# Start gun 1
-#####
+######
+# Start dataframe creation
+######
 
-# Pull down weapon page
-webpage = requests.get(WeapLinks[125])
+# Only using the first 64 links as the weapon type changes so there is a different number of columns needed
+Links = fullLinks[0:63]
 
-# Decode the page
-webpageSrc = webpage.content.decode('utf-8')
+# Creates empty dataframe for the weapon stats
+weaponDF = pd.DataFrame()
 
-# conver the page to beautiful soup format
-soup = bs(webpageSrc, 'lxml')
-
-# Grab gun name from the firstHeading
-gunName = soup.find('h1', id='firstHeading').text
-
-# Remove editing from the start of the guns name
-gunName = re.sub('Editing ', '', gunName)
-
-# converts textarea to a string
-text = str(soup.textarea.contents[0])
-
-# splits on '|type' and only keeps the last indexed item by using -1
-text = text.split('|type', 1)[-1]
-
-# splits on '|ammo' and only keeps the first indexed item by using 0
-text = text.split('|ammo', 1)[0]
-
-# splits on '\n'
-data = text.split('\n')
-
-# Loop that removes characters relating to the categories of the data
-for i in range(len(data)):
-    data[i] = re.sub(r'^|..........\s+[=$]', '', data[i])
+# Loops through the links parsing the webpage and storing the data as beautiful soup
+for i in range(len(Links)):
+    time.sleep(0.5)
+    webpage = requests.get(Links[i])
+    webpageSrc = webpage.content.decode('utf-8')
+    soup = bs(webpageSrc, 'lxml')
     
-# Checks to see if the category op res is missing by looking at the content of the 8th index for fire mode |Single
-# If true it inserts an extra 0 into the list in the 6th index where op res should've been
-if re.match(r'\|Single', data[7]):
-    data.insert(6, 0)
+    # Grab gun name from the firstHeading
+    gunName = soup.find('h1', id='firstHeading').text
 
-if re.match(r'\|Single', data[8]):
-    data.insert(6, 0)
+    # Remove editing from the start of the guns name
+    gunName = re.sub('Editing ', '', gunName)
+
+    # converts textarea to a string
+    text = str(soup.textarea.contents[0])
     
-# Add weapon name as position 2
-data.insert(2, gunName)
+    # splits on '|type' and only keeps the last indexed item by using -1
+    text = text.split('|type', 1)[-1]
+    
+    # splits on '|ammo' and only keeps the first indexed item by using 0
+    text = text.split('|ammo', 1)[0]
+    
+    # splits on '\n'
+    data = text.split('\n')
+    
+    # Loop that removes characters relating to the categories of the data
+    for i in range(len(data)):
+        data[i] = re.sub(r'^|..........\s+[=$]', '', data[i])
+        
+    # Checks to see if the category op res is missing by looking at the content of the 8th index for fire mode |Single
+    # If true it inserts an extra 0 into the list in the 6th index where op res should've been
+    if re.match(r'\|Single', data[7]):
+        data.insert(6, 0)
+    
+    if re.match(r'\|Single', data[8]):
+        data.insert(6, 0)
+        
+    # Add weapon name as position 2
+    data.insert(2, gunName)
+    
+     # Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
+    data[16] = re.sub(r'<br/>', ' ', data[16])
+    data.insert(16, data[16])
+
+    # Initialize an empty list
+    weaponList = []
+    
+    # Use a loop to move the data into the list where a data element is present in the numbers list
+    # Otherwise include a 0
+    for i in range(len(data)):
+        if i in numbers:
+            weaponList.append(data[i])
+        else:
+            weaponList.append(0)
+         
+    #weaponDF[gunName] = weaponList   
+    if len(weaponDF) > 0:
+        # Store new gun in second dataframe    
+        weaponDF2 = pd.DataFrame([weaponList], columns = colmns)              
+        
+        # Append df2 to original df
+        weaponDF = weaponDF.append(weaponDF2)      
+    else:
+        weaponDF = pd.DataFrame([weaponList], columns = colmns)
+   
+######
+# End dataframe creation
+######
+
+###############
+# Start Dataframe cleanup
+###############
 
 # Removes weapons and the type of weapon up to the | symbol
-data[0] = re.sub(r'\[.+?\|', '', data[0])
-   
+weaponDF['itemtypeid'].replace(to_replace=r'\[.+?\|', value = '', regex = True, inplace = True)    
+
 # Removes the trailing bracket symbols
-data[0] = re.sub(r'\]\]', '', data[0])
-data[18] = re.sub(r'\]\]', '', data[18])
-data[19] = re.sub(r'\]\]', '', data[19])
+weaponDF['itemtypeid'].replace(to_replace=r'\]\]', value = '', regex = True, inplace = True)  
+weaponDF['caliber'].replace(to_replace=r'\]\]', value = '', regex = True, inplace = True)  
+weaponDF['defaultammo'].replace(to_replace=r'\]\]', value = '', regex = True, inplace = True)  
 
 # Removes the leading bracket symbols
-data[18] = re.sub(r'\[\[', '', data[18])
-data[19] = re.sub(r'\[\[', '', data[19])
+weaponDF['caliber'].replace(to_replace=r'\[\[', value = '', regex = True, inplace = True)  
+weaponDF['defaultammo'].replace(to_replace=r'\[\[', value = '', regex = True, inplace = True)  
 
 # Removes the leading | symbol
-data[11] = re.sub(r'\|', '', data[11])
-data[12] = re.sub(r'\|', '', data[12])
-
-# Removes the <br/> tag then duplicates itself so the veritcal and horizontal recoil can be split
-data[16] = re.sub(r'<br/>', ' ', data[16])
-data.insert(16, data[16])
+weaponDF['firemodes'].replace(to_replace=r'\|', value = '', regex = True, inplace = True)  
+weaponDF['sightingrange'].replace(to_replace=r'\|', value = '', regex = True, inplace = True)
+weaponDF['ergo'].replace(to_replace=r'\|', value = '', regex = True, inplace = True)  
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[16] = re.sub(r'Vertical: ', '', data[16])
-data[16] = re.sub(r' Horizontal:....', '', data[16])
+weaponDF['recoilvert'].replace(to_replace=r'Vertical: ', value = '', regex = True, inplace = True)  
+weaponDF['recoilvert'].replace(to_replace=r' Horizontal:....', value = '', regex = True, inplace = True)
 
 # Removes vertical from the start and horizontal from the end just leaving the numbers
-data[17] = re.sub(r'Vertical:.*?H', '', data[17])
-data[17] = re.sub(r'orizontal: ', '', data[17])
+weaponDF['recoilhoriz'].replace(to_replace=r'Vertical:.*?H', value = '', regex = True, inplace = True)  
+weaponDF['recoilhoriz'].replace(to_replace=r'orizontal: ', value = '', regex = True, inplace = True)
 
 # Removes the <br/> tag from this element
-data[10] = re.sub(r'<br/>', ', ', data[10])
+weaponDF['firemodes'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
 
-# Removes the | symbol
-data[10] = re.sub(r'\|', '', data[10])
 
-# Initialize an empty list
-weaponList = []
+#########!!!!!!!!!!!!!!! Need check for |caliber=9x19mm
+# Either on SMG or pistol 
 
-# Use a loop to move the data into the list where a data element is present in the numbers list
-# Otherwise include a 0
-for i in range(len(data)):
-    if i in numbers:
-        weaponList.append(data[i])
-    else:
-        weaponList.append(0)
-     
-#weaponDF[gunName] = weaponList   
 
-weaponDF = pd.DataFrame([weaponList], columns = colmns)
- 
+######
+# End Dataframe cleanup
+###### 
+
 #####
-# End gun 1
-#####   
+# Start item type and slot ID conversions
+#####
+# Creates a function that converts the item type to the database number
+def itemTypeId(row):
+    if row['itemtypeid'] == 'Assault rifle':
+        return 1
+    elif row['itemtypeid'] == 'Assault carbine':
+        return 2
+    elif row['itemtypeid'] == 'Light machine gun':
+        return 3
+    elif row['itemtypeid'] == 'Submachine gun':
+        return 4
+    elif row['itemtypeid'] == 'Shotgun':
+        return 5
+    elif row['itemtypeid'] == 'Designated marksman rifle':
+        return 6
+    elif row['itemtypeid'] == 'Sniper rifle':
+        return 7
+    elif row['itemtypeid'] == 'Pistol':
+        return 8
+    elif row['itemtypeid'] == 'Melee weapon':
+        return 9
+    elif row['itemtypeid'] == 'Fragmentation grenade':
+        return 10
+    elif row['itemtypeid'] == 'Smoke grenade':
+        return 11
+    elif row['itemtypeid'] == 'Stun grenade':
+        return 12
+    elif row['itemtypeid'] == 'Mask':
+        return 13
+    elif row['itemtypeid'] == 'Armor vest':
+        return 14
+    elif row['itemtypeid'] == 'Helmet':
+        return 15
+    elif row['itemtypeid'] == 'Armored chest rig':
+        return 16
+    elif row['itemtypeid'] == 'Chest rig':
+        return 17
+    elif row['itemtypeid'] == 'Night vision':
+        return 18
+    elif row['itemtypeid'] == 'Goggles':
+        return 19
+    elif row['itemtypeid'] == 'Backpack':
+        return 20
+    
+# Apply the function across the type column on all rows
+weaponDF['itemtypeid'] = weaponDF.apply(itemTypeId, axis=1)
 
+def slotId(row):
+    if row['slotid'] == "Primary":
+        return 1
+    elif row['slotid'] == "Secondary":
+        return 2
+    elif row['slotid'] == "Melee":
+        return 3
+    elif row['slotid'] == "Headwear":
+        return 4
+    elif row['slotid'] == "Earpiece":
+        return 5
+    elif row['slotid'] == "Face Cover":
+        return 6
+    elif row['slotid'] == "Body Armor":
+        return 7
+    elif row['slotid'] == "Armband":
+        return 8
+    elif row['slotid'] == "Eyewear":
+        return 9
+    elif row['slotid'] == "Chest Rig":
+        return 10
+    elif row['slotid'] == "Backpack":
+        return 11
 
+# Apply slotID across the DF
+weaponDF['slotid'] = weaponDF.apply(slotId, axis=1)
 
-########
-# Sample Code
-########
+#####
+# End item type and slot ID conversions
+#####
 
-#for link in rifleSoup.find_all('a'):
-#    print(link.get('href'))
-#
-#for link in rifleSoup.find_all('a'):
-#    links.append(link.get('href'))
+len("Single, 3-round Burst, Full Auto")
+
+#######
+# Start SQL
+#######
+
+from sqlalchemy import create_engine, MetaData, insert, Table, Column, String, Integer, Float, Boolean, VARCHAR, SmallInteger
+import psycopg2
+import io
+
+meta = MetaData()
+
+# Creates a connection string
+engine = create_engine('postgresql+psycopg2://TomBrody:pass@localhost/tarkov')
+
+# Creates a table using the column names and datatypes defined in the dataframe
+weaponDF.head(0).to_sql('weaponproperties', engine, if_exists = 'replace', index = False)
+
+# raw connection
+conn = engine.raw_connection()
+
+# Opens a cursor to write the data
+cur = conn.cursor()
+
+# prepares an in memory IO stream
+output = io.StringIO()
+
+# converts the dataframe contents to csv format and the IO steam as its destination
+weaponDF.to_csv(output, sep='\t', header=False, index=False)
+
+# sets the file offset position to 0
+output.seek(0)
+
+# retrieves the contents of the output stream
+contents = output.getvalue()
+
+# Copys from the stream to the weaponproperties table
+cur.copy_from(output, 'weaponproperties', null="") # null values become ''
+
+# Commits on the connection to the database
+conn.commit()
+
+#######
+# End SQL
+#######
+
+# column     
+#print(weaponDF.iloc[:,0])
+
+# row     
+#print(weaponDF.iloc[30,:])
