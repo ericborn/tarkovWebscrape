@@ -41,7 +41,7 @@ armorCols = ['itemtypeid','slotid','weight','gridsize','price','traderid','rarit
 # webpage = requests.get('https://escapefromtarkov.gamepedia.com/Chest_rigs')
 
 # helmet
-webpage = requests.get('https://escapefromtarkov.gamepedia.com/Helmet')
+# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Helmet')
 
 # backpack
 # webpage = requests.get('https://escapefromtarkov.gamepedia.com/Backpacks')
@@ -51,6 +51,9 @@ webpage = requests.get('https://escapefromtarkov.gamepedia.com/Helmet')
 
 # Headwear
 # webpage = requests.get('https://escapefromtarkov.gamepedia.com/Headwear')
+
+# Eyewear
+webpage = requests.get('https://escapefromtarkov.gamepedia.com/Eyewear')
 
 # Decode the page
 webpageSrc = webpage.content.decode('utf-8')
@@ -62,11 +65,10 @@ soup = bs(webpageSrc, 'lxml')
 armorLinks = []
 
 # Store links in a list
-for i in soup.find_all("table",{"class":"wikitable"}):
-    for th in i.find_all('th'):
-        for link in th.find_all('a'):
-            #print(link.get('href'))
-            armorLinks.append(link.get('href'))
+for i in soup.find_all("table",{"class":"wikitable sortable"}):
+    for link in i.find_all('a'):
+        #print(link.get('href'))
+        armorLinks.append(link.get('href'))
 
 # Links are duplicated due to the icon and the text being indivdual links to each armor
 # converting to a set and back to a list makes them unique
@@ -90,7 +92,7 @@ for i in range(len(armorLinks)):
 # Creates empty dataframe for the weapon stats
 armorDF = pd.DataFrame()
 
-#links = fullLinks[40:45]
+#links = fullLinks[15:20]
 
 # Loops through the links parsing the webpage and storing the data as beautiful soup
 for i in range(len(fullLinks)):
@@ -197,7 +199,17 @@ for i in range(len(fullLinks)):
         data.insert(14, 0)
         data.insert(15, 0)
     
-    #data[0]
+    ########### Eyewear
+    # Eyewear
+    if re.match(r'.*Eyewear.*', data[1]):   
+        data.insert(7, 0)
+        data.insert(10, 0)
+        data.insert(12, 0)
+        data.insert(14, 0)
+        data.insert(15, 0)
+        data.insert(16, 0)
+        data.insert(17, 0)
+        data.insert(18, 0)
     
     # Add weapon name as position 20
     data.insert(20, itemName)
@@ -213,40 +225,7 @@ for i in range(len(fullLinks)):
         armorDF = pd.DataFrame([data], columns = armorCols)
 
 
-# Removes weapons and the type of weapon up to the | symbol
-armorDF['slotid'].replace(to_replace=r'\[\[', value = '', regex = True, inplace = True)
-armorDF['traderid'].replace(to_replace=r'\[\[', value = '', regex = True, inplace = True)     
-
-# Removes the trailing bracket symbols
-armorDF['slotid'].replace(to_replace=r'\]\]', value = '', regex = True, inplace = True)  
-armorDF['traderid'].replace(to_replace=r'\]\]', value = '', regex = True, inplace = True)  
-
-armorDF['penalties'].replace(to_replace=r'<\/font>', value = '', regex = True, inplace = True)  
-armorDF['penalties'].replace(to_replace=r'"green">', value = '', regex = True, inplace = True)  
-
-armorDF['blocksearpiece'].replace(to_replace=r'<\/font>', value = '', regex = True, inplace = True)  
-armorDF['blocksearpiece'].replace(to_replace=r'"green">', value = '', regex = True, inplace = True)  
-
-armorDF['blockseyewear'].replace(to_replace=r'<\/font>', value = '', regex = True, inplace = True)  
-armorDF['blockseyewear'].replace(to_replace=r'"green">', value = '', regex = True, inplace = True)  
-
-armorDF['blockseyewear'].replace(to_replace=r'<\/font>', value = '', regex = True, inplace = True)  
-armorDF['blockseyewear'].replace(to_replace=r'"green">', value = '', regex = True, inplace = True)  
-
-armorDF['blocksfacecover'].replace(to_replace=r'<\/font>', value = '', regex = True, inplace = True)  
-armorDF['blocksfacecover'].replace(to_replace=r'"green">', value = '', regex = True, inplace = True)  
-
-armorDF['penalties'].replace(to_replace=r'"red">', value = '', regex = True, inplace = True)
-armorDF['blocksearpiece'].replace(to_replace=r'"red">', value = '', regex = True, inplace = True)
-armorDF['blockseyewear'].replace(to_replace=r'"red">', value = '', regex = True, inplace = True)
-armorDF['blocksfacecover'].replace(to_replace=r'"red">', value = '', regex = True, inplace = True)
-
-# Removes the <br/> tag from this element
-armorDF['traderid'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
-armorDF['price'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
-armorDF['ricochetchance'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
-
-print(armorDF.iloc[41,:])
+print(armorDF.iloc[0,:])
 
 print(armorDF.iloc[:,20])
 
