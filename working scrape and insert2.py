@@ -114,29 +114,34 @@ data[16] = re.sub(r'<br/>', ' ', data[16])
 data.insert(16, data[16])   
   
 # Initialize an empty list
-weaponList = []
+testList = []
 
 # Use a loop to move the data into the list where a data element is present in the numbers list
 # Otherwise include a 0
+
+len(colmns)
+
 for i in range(len(data)):
     if i in numbers:
-        weaponList.append(data[i])
+        testList.append(data[i])
     else:
-        weaponList.append(0)
+        testList.append(0)
      
 #weaponDF[gunName] = weaponList   
 
-weaponDF = pd.DataFrame([weaponList], columns = colmns)
+testDF = pd.DataFrame([testList], columns = colmns)
  
 
-weaponDF
+testDF = pd.DataFrame([data], columns = colmns)
+
+testDF
 
 
 
-print(weaponDF.iloc[0,:])
+print(testDF.iloc[0,:])
 
 
-len(weaponDF)
+len(testDF)
 
 
 ###############

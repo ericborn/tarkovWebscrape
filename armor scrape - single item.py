@@ -34,6 +34,7 @@ import re
 armorCols = ['itemtypeid','slotid','weight','gridsize','price','traderid','rarity', 'material', 'armor', 'armorcoverage',
              'armorsegments', 'durability', 'ricochetchance', 'penalties','blocksarmor', 'blocksearpiece', 'blockseyewear', 
              'blocksfacecover','blocksheadwear','slots','name']
+
 # body armor
 #webpage = requests.get('https://escapefromtarkov.gamepedia.com/Armor_vests')
 
@@ -52,8 +53,7 @@ armorCols = ['itemtypeid','slotid','weight','gridsize','price','traderid','rarit
 # Headwear
 # webpage = requests.get('https://escapefromtarkov.gamepedia.com/Headwear')
 
-
-webpage = requests.get('https://escapefromtarkov.gamepedia.com/index.php?title=Peltor_ComTac_2_headset&action=edit')
+webpage = requests.get( 'https://escapefromtarkov.gamepedia.com/index.php?title=SHPM_Firefighter%27s_helmet&action=edit')
 
 # Decode the page
 webpageSrc = webpage.content.decode('utf-8')
@@ -86,7 +86,7 @@ for i in range(len(data)):
 
 ########### Tactical Rig 
 # Rig
-if re.match('\[\[Chest rigs\|Chest rig\]\]', data[0]):
+if re.match('.*?\[\[Chest rigs\|Chest rig\]\]', data[0]):
     data.insert(7, 0)
     data.insert(10, 0)
     data.insert(12, 0)
@@ -94,6 +94,7 @@ if re.match('\[\[Chest rigs\|Chest rig\]\]', data[0]):
     data.insert(16, 0)
     data.insert(17, 0)
     data.insert(18, 0)
+
 
 # Armored chest rig
 if re.match(r'.*Armored chest rig.*', data[0]):   
@@ -103,10 +104,12 @@ if re.match(r'.*Armored chest rig.*', data[0]):
     data.insert(16, 0)
     data.insert(17, 0)
     data.insert(18, 0)
+    
 
 ########### Body    
 # armor
 if re.match(r'.*Armor vest.*', data[0]):
+    data.insert(10, 0)
     data.insert(12, 0)
     data.insert(14, 0)
     data.insert(15, 0)
@@ -116,7 +119,7 @@ if re.match(r'.*Armor vest.*', data[0]):
 
 ########### Backpack
 # Backpack
-if re.match(r'.*Backpack.*', data[0]):    
+if re.match(r'.*Backpack.*', data[1]):    
     data.insert(7, 0)
     data.insert(10, 0)
     data.insert(12, 0)
@@ -139,8 +142,8 @@ if re.match(r'.*Head Mount.*', data[0]):
     data.insert(14, 0)
     data.insert(18, 0)
       
-# Headwear/hat
-if re.match(r'.*Headwear.*', data[1]):  
+# hat/cap/bandana
+if any(re.match(regex_str, data[0]) for regex_str in [r'.*Hat.*', r'.*Cap.*', r'.*Bandana.*']):  
     data.insert(10, 0)
     data.insert(12, 0)
     data.insert(14, 0)
@@ -166,6 +169,14 @@ data.insert(20, itemName)
 
 # Store new gun in second dataframe    
 testDF2 = pd.DataFrame([data], columns = armorCols)              
+
+
+
+
+
+
+
+
 
 # Append df2 to original df
 testDF = testDF.append(testDF2)

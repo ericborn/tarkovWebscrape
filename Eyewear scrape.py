@@ -34,23 +34,6 @@ import re
 armorCols = ['itemtypeid','slotid','weight','gridsize','price','traderid','rarity', 'material', 'armor', 'armorcoverage',
              'armorsegments', 'durability', 'ricochetchance', 'penalties','blocksarmor', 'blocksearpiece', 'blockseyewear', 
              'blocksfacecover','blocksheadwear','slots','name']
-# body armor
-#webpage = requests.get('https://escapefromtarkov.gamepedia.com/Armor_vests')
-
-# rigs
-# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Chest_rigs')
-
-# helmet
-# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Helmet')
-
-# backpack
-# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Backpacks')
-
-# Earpieces
-# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Earpieces')
-
-# Headwear
-# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Headwear')
 
 # Eyewear
 webpage = requests.get('https://escapefromtarkov.gamepedia.com/Eyewear')
@@ -124,81 +107,6 @@ for i in range(len(fullLinks)):
         #data[i] = re.sub(r'\|.*=', '', data[i])
         data[i] = re.sub(r'.*=', '', data[i])
     
-    ########### Tactical Rig 
-    # Rig
-    if re.match('.*?\[\[Chest rigs\|Chest rig\]\]', data[0]):
-        data.insert(7, 0)
-        data.insert(10, 0)
-        data.insert(12, 0)
-        data.insert(15, 0)
-        data.insert(16, 0)
-        data.insert(17, 0)
-        data.insert(18, 0)
-    
-    # Armored chest rig
-    if re.match(r'.*Armored chest rig.*', data[0]):   
-        data.insert(10, 0)
-        data.insert(12, 0)
-        data.insert(15, 0)
-        data.insert(16, 0)
-        data.insert(17, 0)
-        data.insert(18, 0)
-    
-    ########### Body    
-    # armor
-    if re.match(r'.*Armor vest.*', data[0]):
-        data.insert(10, 0)
-        data.insert(12, 0)
-        data.insert(14, 0)
-        data.insert(15, 0)
-        data.insert(16, 0)
-        data.insert(17, 0)
-        data.insert(18, 0)
-    
-    ########### Backpack
-    # Backpack
-    if re.match(r'.*Backpack.*', data[0]):    
-        data.insert(7, 0)
-        data.insert(10, 0)
-        data.insert(12, 0)
-        data.insert(14, 0)
-        data.insert(15, 0)
-        data.insert(16, 0)
-        data.insert(17, 0)
-        data.insert(18, 0)
-    
-    ########### Headwear
-    # helmet
-    if re.match(r'.*Helmet.*', data[0]):
-        data.insert(14, 0)
-        data.insert(18, 0)
-        
-    # Headmount
-    if re.match(r'.*Head Mount.*', data[0]):  
-        data.insert(10, 0)
-        data.insert(12, 0)
-        data.insert(14, 0)
-        data.insert(18, 0)
-          
-    # hat/cap/bandana
-    if any(re.match(regex_str, data[0]) for regex_str in [r'.*Hat.*', r'.*Cap.*', r'.*Bandana.*', r'.*Mask.*']):  
-        data.insert(10, 0)
-        data.insert(12, 0)
-        data.insert(14, 0)
-        data.insert(15, 0)
-        data.insert(16, 0)
-        data.insert(17, 0)
-        data.insert(18, 0)
-    
-    ########### Earpiece
-    # headset
-    if re.match(r'.*Headset.*', data[0]):   
-        data.insert(7, 0)
-        data.insert(10, 0)
-        data.insert(12, 0)
-        data.insert(14, 0)
-        data.insert(15, 0)
-    
     ########### Eyewear
     # Eyewear
     if re.match(r'.*Eyewear.*', data[1]):   
@@ -257,9 +165,128 @@ armorDF['traderid'].replace(to_replace=r'<br/>', value = ', ', regex = True, inp
 armorDF['price'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
 armorDF['ricochetchance'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
 
+#####
+# Start item type and slot ID conversions
+#####
+# Creates a function that converts the item type to the database number
+def itemTypeId(row):
+    if row['itemtypeid'] == 'Assault rifle':
+        return 1
+    elif row['itemtypeid'] == 'Assault carbine':
+        return 2
+    elif row['itemtypeid'] == 'Light machine gun':
+        return 3
+    elif row['itemtypeid'] == 'Submachine gun':
+        return 4
+    elif row['itemtypeid'] == 'Shotgun':
+        return 5
+    elif row['itemtypeid'] == 'Designated marksman rifle':
+        return 6
+    elif row['itemtypeid'] == 'Sniper rifle':
+        return 7
+    elif row['itemtypeid'] == 'Pistol':
+        return 8
+    elif row['itemtypeid'] == 'Melee weapon':
+        return 9
+    elif row['itemtypeid'] == 'Fragmentation grenade':
+        return 10
+    elif row['itemtypeid'] == 'Smoke grenade':
+        return 11
+    elif row['itemtypeid'] == 'Stun grenade':
+        return 12
+    elif row['itemtypeid'] == 'Mask':
+        return 13
+    elif row['itemtypeid'] == 'Armor vest':
+        return 14
+    elif row['itemtypeid'] == 'Helmet':
+        return 15
+    elif row['itemtypeid'] == 'Armored chest rig':
+        return 16
+    elif row['itemtypeid'] == 'Chest rig':
+        return 17
+    elif row['itemtypeid'] == 'Night vision':
+        return 18
+    elif row['itemtypeid'] == 'Goggles':
+        return 19
+    elif row['itemtypeid'] == 'Backpack':
+        return 20
+    
+# Apply the function across the type column on all rows
+armorDF['itemtypeid'] = armorDF.apply(itemTypeId, axis=1)
 
-print(armorDF.iloc[0,:])
+def slotId(row):
+    if row['slotid'] == "Primary":
+        return 1
+    elif row['slotid'] == "Secondary":
+        return 2
+    elif row['slotid'] == "Melee":
+        return 3
+    elif row['slotid'] == "Headwear":
+        return 4
+    elif row['slotid'] == "Earpiece":
+        return 5
+    elif row['slotid'] == "Face cover":
+        return 6
+    elif row['slotid'] == "Body armor":
+        return 7
+    elif row['slotid'] == "Armband":
+        return 8
+    elif row['slotid'] == "Eyewear":
+        return 9
+    elif row['slotid'] == "Chest rig":
+        return 10
+    elif row['slotid'] == "Backpack":
+        return 11
+    
+# Apply slotID across the DF
+armorDF['slotid'] = armorDF.apply(slotId, axis=1)
 
-print(armorDF.iloc[:,20])
+#######
+# Start SQL
+#######
 
-len(armorDF)
+from sqlalchemy import create_engine, MetaData, insert, Table, Column, String, Integer, Float, Boolean, VARCHAR, SmallInteger
+import psycopg2
+import io
+
+meta = MetaData()
+
+# Creates a connection string
+engine = create_engine('postgresql+psycopg2://TomBrody:pass@localhost/tarkov')
+
+# Creates a table using the column names and datatypes defined in the dataframe
+armorDF.head(0).to_sql('equipmentproperties', engine, if_exists = 'append', index = False)
+
+# raw connection
+conn = engine.raw_connection()
+
+# Opens a cursor to write the data
+cur = conn.cursor()
+
+# prepares an in memory IO stream
+output = io.StringIO()
+
+# converts the dataframe contents to csv format and the IO steam as its destination
+armorDF.to_csv(output, sep='\t', header=False, index=False)
+
+# sets the file offset position to 0
+output.seek(0)
+
+# retrieves the contents of the output stream
+contents = output.getvalue()
+
+# Copys from the stream to the weaponproperties table
+cur.copy_from(output, 'equipmentproperties', null="") # null values become ''
+
+# Commits on the connection to the database
+conn.commit()
+
+#######
+# End SQL
+#######
+
+#print(armorDF.iloc[1,:])
+#
+#print(armorDF.iloc[:,1])
+#
+#len(armorDF)

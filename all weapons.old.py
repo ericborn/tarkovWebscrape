@@ -10,17 +10,9 @@ import pandas as pd
 import re
 import time
 
-#!!!!!!!!! Build in error handling or HTTP retry on timeout!!!!!!!!!!!!!
-#ConnectionError: HTTPSConnectionPool(host='escapefromtarkov.gamepedia.com', port=443): Max retries exceeded 
-#with url: /index.php?title=SIG_MPX_9x19_Submachine_gun&action=edit (Caused by 
-#NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x0000026A9B1F2DA0>: 
-#Failed to establish a new connection: [WinError 10060] A connection attempt failed because the connected party did not 
-#properly respond after a period of time, or established connection failed because connected host has failed to respond'))
-#!!!!!!!!! Build in error handling or HTTP retry on timeout!!!!!!!!!!!!!
-
-#####
+###############################
 # Weapons links start
-#####
+###############################
 
 # Pulls down the full weapons page
 weaponPage = requests.get('https://escapefromtarkov.gamepedia.com/Weapons#Assault_rifles')
@@ -58,7 +50,7 @@ for i in range(len(weapLinks)):
     weapCrawl = requests.get('https://escapefromtarkov.gamepedia.com' + weapLinks[i])
     weapSrc = weapCrawl.content.decode('utf-8')
     weapSoup = bs(weapSrc, 'lxml')
-    time.sleep(1)
+    time.sleep(0.5)
     for link in weapSoup.find_all('a', accesskey = 'e'):
         fullLinks.append('https://escapefromtarkov.gamepedia.com' + link.get('href'))
 
@@ -72,11 +64,16 @@ for i in range(len(weapLinks)):
 ######
 # Start setup
 ######
+# Creates a number set that corresponds to the categorys we're actully pulling data in from
+numbers = [0, 1, 2, 3, 4, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20]
 
 #Initalize category list
-weaponColumns = ['itemtypeid','slotid','name','weight','gridsize','price','traderid','opres','rarity','repair','firemodes',
-                 'sightingrange','ergo','muzzlevelocity','effectivedistance','accuracy','recoilvert',
-                 'recoilhoriz','rpm','caliber','defaultammo','defaultmag']
+colmns = ['itemtypeid','slotid','name','weight','gridsize','price','traderid','opres','rarity','repair','firemodes',
+           'sightingrange','ergo','muzzlevelocity','effectivedistance','accuracy','recoilvert',
+           'recoilhoriz','rpm','caliber','defaultammo','defaultmag']
+
+# Convert the categories into a dataframe 
+#weaponDF = pd.DataFrame(columns)
 
 ######
 # End setup
@@ -94,7 +91,7 @@ weaponDF = pd.DataFrame()
 
 # Loops through the links parsing the webpage and storing the data as beautiful soup
 for i in range(len(Links)):
-    time.sleep(1)
+    time.sleep(0.5)
     webpage = requests.get(Links[i])
     webpageSrc = webpage.content.decode('utf-8')
     soup = bs(webpageSrc, 'lxml')
@@ -136,15 +133,37 @@ for i in range(len(Links)):
     data[16] = re.sub(r'<br/>', ' ', data[16])
     data.insert(16, data[16])
 
-    # checks if the dataframe already has any items in it. If it does it appends, if not it creates
+    # Initialize an empty list
+    weaponList = []
+    
+    # Use a loop to move the data into the list where a data element is present in the numbers list
+    # Otherwise include a 0
+    #for i in range(len(data)):
+    #    if i in numbers:
+    #        weaponList.append(data[i])
+    #    else:
+    #        weaponList.append(0)
+    
+     
+#    #weaponDF[gunName] = weaponList   
+#    if len(weaponDF) > 0:
+#        # Store new gun in second dataframe    
+#        weaponDF2 = pd.DataFrame([weaponList], columns = colmns)              
+#        
+#        # Append df2 to original df
+#        weaponDF = weaponDF.append(weaponDF2)      
+#    else:
+#        weaponDF = pd.DataFrame([weaponList], columns = colmns)
+    
+    #weaponDF[gunName] = weaponList   
     if len(weaponDF) > 0:
         # Store new gun in second dataframe    
-        weaponDF2 = pd.DataFrame([data], columns = weaponColumns)              
+        weaponDF2 = pd.DataFrame([data], columns = colmns)              
         
         # Append df2 to original df
         weaponDF = weaponDF.append(weaponDF2)      
     else:
-        weaponDF = pd.DataFrame([data], columns = weaponColumns)
+        weaponDF = pd.DataFrame([data], columns = colmns)
    
 ######
 # End dataframe creation
@@ -185,12 +204,6 @@ weaponDF['firemodes'].replace(to_replace=r'<br/>', value = ', ', regex = True, i
 # Removes |caliber=9x19mm
 weaponDF['caliber'].replace(to_replace=r'\|.*?=', value = '', regex = True, inplace = True)
 
-# Remove brackets from traderId column
-weaponDF['traderid'].replace(to_replace=r'\[\[', value = '', regex = True, inplace = True)
-weaponDF['traderid'].replace(to_replace=r'\]\]', value = '', regex = True, inplace = True)
-
-# Replace <br/> with a comma
-weaponDF['traderid'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
 
 ######
 # End Dataframe cleanup
@@ -275,6 +288,8 @@ weaponDF['slotid'] = weaponDF.apply(slotId, axis=1)
 #####
 # End item type and slot ID conversions
 #####
+
+len("Single, 3-round Burst, Full Auto")
 
 #######
 # Start SQL

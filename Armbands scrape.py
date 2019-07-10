@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Tue Jul  9 20:11:34 2019
+
+@author: Eric Born
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Mon Jul  8 22:08:44 2019
 
 @author: Eric Born
@@ -34,23 +41,8 @@ import re
 armorCols = ['itemtypeid','slotid','weight','gridsize','price','traderid','rarity', 'material', 'armor', 'armorcoverage',
              'armorsegments', 'durability', 'ricochetchance', 'penalties','blocksarmor', 'blocksearpiece', 'blockseyewear', 
              'blocksfacecover','blocksheadwear','slots','name']
-# body armor
-#webpage = requests.get('https://escapefromtarkov.gamepedia.com/Armor_vests')
-
-# rigs
-# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Chest_rigs')
-
-# helmet
-webpage = requests.get('https://escapefromtarkov.gamepedia.com/Helmet')
-
 # backpack
-# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Backpacks')
-
-# Earpieces
-# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Earpieces')
-
-# Headwear
-# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Headwear')
+webpage = requests.get('https://escapefromtarkov.gamepedia.com/Armbands')
 
 # Decode the page
 webpageSrc = webpage.content.decode('utf-8')
@@ -63,10 +55,9 @@ armorLinks = []
 
 # Store links in a list
 for i in soup.find_all("table",{"class":"wikitable"}):
-    for th in i.find_all('th'):
-        for link in th.find_all('a'):
-            #print(link.get('href'))
-            armorLinks.append(link.get('href'))
+    for link in i.find_all('a'):
+        #print(link.get('href'))
+        armorLinks.append(link.get('href'))
 
 # Links are duplicated due to the icon and the text being indivdual links to each armor
 # converting to a set and back to a list makes them unique
@@ -90,7 +81,7 @@ for i in range(len(armorLinks)):
 # Creates empty dataframe for the weapon stats
 armorDF = pd.DataFrame()
 
-#links = fullLinks[40:45]
+#links = fullLinks[10:15]
 
 # Loops through the links parsing the webpage and storing the data as beautiful soup
 for i in range(len(fullLinks)):
@@ -122,30 +113,18 @@ for i in range(len(fullLinks)):
         #data[i] = re.sub(r'\|.*=', '', data[i])
         data[i] = re.sub(r'.*=', '', data[i])
     
-    
-    ########### Headwear
-    # helmet
-    if re.match(r'.*Helmet.*', data[0]):
-        data.insert(14, '')
-        data.insert(18, '')
-        
-    # Headmount
-    if re.match(r'.*Head Mount.*', data[0]):  
-        data.insert(10, '')
-        data.insert(12, '')
-        data.insert(14, '')
-        data.insert(18, '')
-          
-    # hat/cap/bandana
-    if any(re.match(regex_str, data[0]) for regex_str in [r'.*Hat.*', r'.*Cap.*', r'.*Bandana.*', r'.*Mask.*']):  
-        data.insert(10, '')
-        data.insert(12, '')
-        data.insert(14, '')
-        data.insert(15, '')
-        data.insert(16, '')
-        data.insert(17, '')
-        data.insert(18, '')
-    
+    ########### Backpack
+    # Backpack
+    if re.match(r'.*Armband.*', data[1]):    
+        data.insert(7, 0)
+        data.insert(10, 0)
+        data.insert(12, 0)
+        data.insert(14, 0)
+        data.insert(15, 0)
+        data.insert(16, 0)
+        data.insert(17, 0)
+        data.insert(18, 0)
+
     # Add weapon name as position 20
     data.insert(20, itemName)
 
@@ -159,12 +138,13 @@ for i in range(len(fullLinks)):
     else:
         armorDF = pd.DataFrame([data], columns = armorCols)
 
-
-# Removes weapons and the type of weapon up to the | symbol
-armorDF['slotid'].replace(to_replace=r'\[\[', value = '', regex = True, inplace = True)
-armorDF['traderid'].replace(to_replace=r'\[\[', value = '', regex = True, inplace = True)     
+# Removes leading brackets
+armorDF['itemtypeid'].replace(to_replace=r'\[\[Armbands\|', value = '', regex = True, inplace = True) 
+armorDF['slotid'].replace(to_replace=r'\[\[Armbands\|', value = '', regex = True, inplace = True)
+armorDF['traderid'].replace(to_replace=r'\[\[', value = '', regex = True, inplace = True)    
 
 # Removes the trailing bracket symbols
+armorDF['itemtypeid'].replace(to_replace=r'\]\]', value = '', regex = True, inplace = True)  
 armorDF['slotid'].replace(to_replace=r'\]\]', value = '', regex = True, inplace = True)  
 armorDF['traderid'].replace(to_replace=r'\]\]', value = '', regex = True, inplace = True)  
 
@@ -192,6 +172,8 @@ armorDF['blocksfacecover'].replace(to_replace=r'"red">', value = '', regex = Tru
 armorDF['traderid'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
 armorDF['price'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
 armorDF['ricochetchance'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
+armorDF['penalties'].replace(to_replace=r'<br/>', value = '', regex = True, inplace = True)
+armorDF['slots'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
 
 #####
 # Start item type and slot ID conversions
@@ -250,7 +232,9 @@ def itemTypeId(row):
         return 25
     elif row['itemtypeid'] == 'Bag':
         return 26
-       
+    elif row['itemtypeid'] == 'Armband':
+        return 27 
+     
 # Apply the function across the type column on all rows
 armorDF['itemtypeid'] = armorDF.apply(itemTypeId, axis=1)
 
@@ -277,7 +261,7 @@ def slotId(row):
         return 10
     elif row['slotid'] == "Backpack":
         return 11
-    
+
 # Apply slotID across the DF
 armorDF['slotid'] = armorDF.apply(slotId, axis=1)
 

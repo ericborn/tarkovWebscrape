@@ -52,56 +52,6 @@ CREATE UNIQUE INDEX "PK_currency" ON "public"."currency"
  "CurrId"
 );
 
--- ************************************** "public"."armorProperties"
-
-CREATE TABLE "public"."armorProperties"
-(
- "armorId"       integer NOT NULL,
- "slotId"        integer NULL,
- "itemTypeId"    int NULL,
- "weight"        int NOT NULL,
- "traderId"      integer NOT NULL,
- "gridSize"      varchar(50) NOT NULL,
- "material"      varchar(50) NOT NULL,
- "armorClass"    smallint NOT NULL,
- "zone"          varchar(50) NOT NULL,
- "armorSegments" varchar(50) NOT NULL,
- "durability"    smallint NOT NULL,
- "ricochet"      varchar(50) NOT NULL,
- "penMove"       varchar(50) NOT NULL,
- "penTurn"       varchar(50) NOT NULL,
- "penErgo"       varchar(50) NOT NULL,
- "penSound"      varchar(50) NOT NULL,
- "blocksEar"     varchar(3) NOT NULL,
- "blocksEye"     varchar(3) NOT NULL,
- "blocksFace"    varchar(3) NOT NULL,
- "lootXp"        smallint NOT NULL,
- "examXP"        smallint NOT NULL,
- CONSTRAINT "FK_290" FOREIGN KEY ( "slotId" ) REFERENCES "slot" ( "slotId" ),
- CONSTRAINT "FK_294" FOREIGN KEY ( "itemTypeId" ) REFERENCES "public"."itemType" ( "itemTypeId" ),
- CONSTRAINT "FK_305" FOREIGN KEY ( "traderId" ) REFERENCES "public"."trader" ( "traderId" )
-);
-
-CREATE UNIQUE INDEX "PK_properties" ON "public"."armorProperties"
-(
- "armorId"
-);
-
-CREATE INDEX "fkIdx_290" ON "public"."armorProperties"
-(
- "slotId"
-);
-
-CREATE INDEX "fkIdx_294" ON "public"."armorProperties"
-(
- "itemTypeId"
-);
-
-CREATE INDEX "fkIdx_305" ON "public"."armorProperties"
-(
- "traderId"
-);
-
 --drop table slot
 CREATE TABLE slot
 (
@@ -111,7 +61,8 @@ CREATE TABLE slot
 
 -- Insert values into slot table
 INSERT INTO public.slot("slot")
-VALUES('Primary'),('Secondary'),('Melee'),('Headwear'),('Earpiece'),('Face Cover'),('Body Armor'),('Armband'),('Eyewear'),('Chest Rig'),('Backpack');
+VALUES('Primary'),('Secondary'),('Melee'),('Headwear'),('Earpiece'),('Face Cover'),('Body Armor'),
+('Armband'),('Eyewear'),('Chest Rig'),('Backpack');
 
 --SELECT * FROM slot
 
@@ -121,13 +72,13 @@ CREATE TABLE itemType
 	"itemTypeId"	smallint NOT NULL GENERATED ALWAYS AS IDENTITY,
 	"itemType"		varchar(50)
 );
-
+--truncate table itemType
 INSERT INTO public.itemType("itemType")
 VALUES('Assault rifle'),('Assault carbine'),('Light machine gun'),('Submachine gun'),('Shotgun'),('Designated marksman rifle'),
 ('Sniper rifle'),('Pistol'),('Melee weapon'),('Fragmentation grenade'),('Smoke grenade'),('Stun grenade'),('Mask'),('Armor vest'),('Helmet'),('Armored chest rig'),
-('Chest rig'),('Night vision'),('Goggles'),('Backpack');
---,(''),(''),(''),(''),(''),(''),(''),(''),(''),(''),(''),('');
-
+('Chest rig'),('Night vision'),('Goggles'),('Backpack'),('Cap'),('Head Mount'),('Mask'),('Bandana'),('Hat'),('Bag'),('Headset')
+--,(''),(''),(''),(''),(''),('');
+--select * from itemType
 
 --drop table public.weaponProperties
 -- ************************************** "public"."weaponProperties"
@@ -166,6 +117,7 @@ COPY weaponProperties(itemTypeId,slotId,name,weight,gridSize,price,traderId,opRe
 					  accuracy,recoilVert,recoilHoriz,rpm,caliber,defaultAmmo,defaultMag)
 FROM 'd:\test.csv' DELIMITER ',' CSV HEADER;
 */
+
 SELECT * FROM weaponProperties
 
 -- Fix an issue with the default ammo type on two shotguns
@@ -173,26 +125,34 @@ UPDATE weaponproperties
 SET defaultammo = '12x70 Buckshot'
 WHERE defaultammo LIKE '%560d5e524bdc2d25448b4571%'
 
+-- Set column types to more appropriate values since the ones assigned by python are larger thgan needed
 ALTER TABLE weaponproperties
 ALTER COLUMN itemtypeid 		TYPE smallint,
 ALTER COLUMN slotId 			TYPE smallint,
-ALTER COLUMN name				TYPE varchar(50),
+ALTER COLUMN name				TYPE varchar(100),
 ALTER COLUMN weight   			TYPE varchar(10),
 ALTER COLUMN gridSize 			TYPE varchar(10),
-ALTER COLUMN price     			TYPE varchar(5),
-ALTER COLUMN traderId   		TYPE smallint,
-ALTER COLUMN opRes    			TYPE smallint,
-ALTER COLUMN rarity   			TYPE smallint,
-ALTER COLUMN repair 			TYPE smallint,
+ALTER COLUMN price     			TYPE varchar(10),
+ALTER COLUMN traderId   		TYPE varchar(200),
+ALTER COLUMN opRes    			TYPE smallint USING (opRes::smallint),
+ALTER COLUMN rarity   			TYPE varchar(10),
+ALTER COLUMN repair 			TYPE smallint USING (repair::smallint),
 ALTER COLUMN fireModes  		TYPE varchar(50),
 ALTER COLUMN sightingRange 		TYPE smallint USING (sightingRange::smallint),
 ALTER COLUMN ergo    			TYPE smallint USING (ergo::smallint),
 ALTER COLUMN muzzleVelocity 	TYPE varchar(10),
 ALTER COLUMN effectiveDistance 	TYPE varchar(6),
-ALTER COLUMN accuracy    		TYPE smallint,
-ALTER COLUMN recoilvert   		TYPE smallint USING (recoilvert::smallint),
+ALTER COLUMN accuracy    		TYPE smallint USING (accuracy::smallint),
+ALTER COLUMN recoilVert   		TYPE smallint USING (recoilvert::smallint),
 ALTER COLUMN recoilHoriz  		TYPE smallint USING (recoilHoriz::smallint),
 ALTER COLUMN rpm   				TYPE smallint USING (rpm::smallint),
-ALTER COLUMN caliber     		TYPE varchar(30),
+ALTER COLUMN caliber     		TYPE varchar(50),
 ALTER COLUMN defaultAmmo    	TYPE varchar(50),
-ALTER COLUMN defaultmag			TYPE varchar(50)
+ALTER COLUMN defaultMag			TYPE varchar(50)
+
+-- Need to hand jam grenade and melee weapons
+
+-- DROP TABLE equipmentproperties
+--Start Equipment
+SELECT * FROM equipmentproperties
+where slotid = 5
