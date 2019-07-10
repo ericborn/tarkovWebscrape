@@ -224,6 +224,39 @@ for i in range(len(fullLinks)):
     else:
         armorDF = pd.DataFrame([data], columns = armorCols)
 
+# Removes weapons and the type of weapon up to the | symbol
+armorDF['slotid'].replace(to_replace=r'\[\[', value = '', regex = True, inplace = True)
+armorDF['traderid'].replace(to_replace=r'\[\[', value = '', regex = True, inplace = True)     
+
+# Removes the trailing bracket symbols
+armorDF['slotid'].replace(to_replace=r'\]\]', value = '', regex = True, inplace = True)  
+armorDF['traderid'].replace(to_replace=r'\]\]', value = '', regex = True, inplace = True)  
+
+armorDF['penalties'].replace(to_replace=r'<\/font>', value = '', regex = True, inplace = True)  
+armorDF['penalties'].replace(to_replace=r'"green">', value = '', regex = True, inplace = True)  
+
+armorDF['blocksearpiece'].replace(to_replace=r'<\/font>', value = '', regex = True, inplace = True)  
+armorDF['blocksearpiece'].replace(to_replace=r'"green">', value = '', regex = True, inplace = True)  
+
+armorDF['blockseyewear'].replace(to_replace=r'<\/font>', value = '', regex = True, inplace = True)  
+armorDF['blockseyewear'].replace(to_replace=r'"green">', value = '', regex = True, inplace = True)  
+
+armorDF['blockseyewear'].replace(to_replace=r'<\/font>', value = '', regex = True, inplace = True)  
+armorDF['blockseyewear'].replace(to_replace=r'"green">', value = '', regex = True, inplace = True)  
+
+armorDF['blocksfacecover'].replace(to_replace=r'<\/font>', value = '', regex = True, inplace = True)  
+armorDF['blocksfacecover'].replace(to_replace=r'"green">', value = '', regex = True, inplace = True)  
+
+armorDF['penalties'].replace(to_replace=r'"red">', value = '', regex = True, inplace = True)
+armorDF['blocksearpiece'].replace(to_replace=r'"red">', value = '', regex = True, inplace = True)
+armorDF['blockseyewear'].replace(to_replace=r'"red">', value = '', regex = True, inplace = True)
+armorDF['blocksfacecover'].replace(to_replace=r'"red">', value = '', regex = True, inplace = True)
+
+# Removes the <br/> tag from this element
+armorDF['traderid'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
+armorDF['price'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
+armorDF['ricochetchance'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
+
 
 print(armorDF.iloc[0,:])
 
