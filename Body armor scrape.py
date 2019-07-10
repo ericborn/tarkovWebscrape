@@ -44,13 +44,15 @@ armorCols = ['itemtypeid','slotid','weight','gridsize','price','traderid','rarit
 # webpage = requests.get('https://escapefromtarkov.gamepedia.com/Helmet')
 
 # backpack
-webpage = requests.get('https://escapefromtarkov.gamepedia.com/Backpacks')
+# webpage = requests.get('https://escapefromtarkov.gamepedia.com/Backpacks')
 
 # Earpieces
 # webpage = requests.get('https://escapefromtarkov.gamepedia.com/Earpieces')
 
 # Headwear
 # webpage = requests.get('https://escapefromtarkov.gamepedia.com/Headwear')
+
+webpage = requests.get('https://escapefromtarkov.gamepedia.com/Armor_vests')
 
 # Decode the page
 webpageSrc = webpage.content.decode('utf-8')
@@ -89,7 +91,7 @@ for i in range(len(armorLinks)):
 # Creates empty dataframe for the weapon stats
 armorDF = pd.DataFrame()
 
-#links = fullLinks[10:15]
+#links = fullLinks[15:20]
 
 # Loops through the links parsing the webpage and storing the data as beautiful soup
 for i in range(len(fullLinks)):
@@ -123,7 +125,7 @@ for i in range(len(fullLinks)):
     
     ########### Tactical Rig 
     # Rig
-    if re.match('.*?\[\[Chest rigs\|Chest rig\]\]', data[0]):
+    if re.match('\[\[Chest rigs\|Chest rig\]\]', data[0]):
         data.insert(7, 0)
         data.insert(10, 0)
         data.insert(12, 0)
@@ -154,7 +156,7 @@ for i in range(len(fullLinks)):
     
     ########### Backpack
     # Backpack
-    if re.match(r'.*Backpack.*', data[1]):    
+    if re.match(r'.*Backpack.*', data[0]):    
         data.insert(7, 0)
         data.insert(10, 0)
         data.insert(12, 0)
@@ -177,8 +179,8 @@ for i in range(len(fullLinks)):
         data.insert(14, 0)
         data.insert(18, 0)
           
-    # hat/cap/bandana
-    if any(re.match(regex_str, data[0]) for regex_str in [r'.*Hat.*', r'.*Cap.*', r'.*Bandana.*', r'.*Mask.*']):  
+    # Headwear/hat
+    if re.match(r'.*Headwear.*', data[1]):  
         data.insert(10, 0)
         data.insert(12, 0)
         data.insert(14, 0)
@@ -212,8 +214,8 @@ for i in range(len(fullLinks)):
         armorDF = pd.DataFrame([data], columns = armorCols)
 
 # Removes leading brackets
-armorDF['itemtypeid'].replace(to_replace=r'\[\[Backpacks\|', value = '', regex = True, inplace = True) 
-armorDF['slotid'].replace(to_replace=r'\[\[Backpacks\|', value = '', regex = True, inplace = True)
+armorDF['itemtypeid'].replace(to_replace=r'\[\[Armor vests\|', value = '', regex = True, inplace = True) 
+armorDF['slotid'].replace(to_replace=r'\[\[Armor vests\|', value = '', regex = True, inplace = True)
 armorDF['traderid'].replace(to_replace=r'\[\[', value = '', regex = True, inplace = True)    
 
 # Removes the trailing bracket symbols
@@ -248,7 +250,7 @@ armorDF['ricochetchance'].replace(to_replace=r'<br/>', value = ', ', regex = Tru
 armorDF['penalties'].replace(to_replace=r'<br/>', value = '', regex = True, inplace = True)
 armorDF['slots'].replace(to_replace=r'<br/>', value = ', ', regex = True, inplace = True)
 
-print(armorDF.iloc[13,:])
+print(armorDF.iloc[0,:])
 
 print(armorDF.iloc[:,20])
 
