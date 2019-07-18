@@ -161,26 +161,26 @@ where slotid = 5
 -- DROP TABLE medical
 CREATE TABLE medical
 (
-	medId	   SMALLINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-	itemtypeid SMALLINT,
-	slotid SMALLINT,
-	name VARCHAR(100),
-	weight varchar(10),
-	gridsize VARCHAR(7),
-	price VARCHAR(10),
-	traderid SMALLINT,
-	rarity VARCHAR(30),
-	hpUse SMALLINT,
-	hpTotal SMALLINT,
-	removes VARCHAR(500),
-	adds VARCHAR(500),
-	buff VARCHAR(500),
-	debuff VARCHAR(500),
-	uses SMALLINT,
-	usetime VARCHAR(4),
+	medId	   	SMALLINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	itemtypeid 	SMALLINT,
+	slotid 		SMALLINT,
+	name 		VARCHAR(100),
+	weight 		VARCHAR(10),
+	gridsize 	VARCHAR(7),
+	price 		VARCHAR(10),
+	traderid 	SMALLINT,
+	rarity 		VARCHAR(30),
+	hpUse 		SMALLINT,
+	hpTotal 	SMALLINT,
+	removes 	VARCHAR(500),
+	adds 		VARCHAR(500),
+	buff 		VARCHAR(500),
+	debuff 		VARCHAR(500),
+	uses 		SMALLINT,
+	usetime 	VARCHAR(4),
 	spawnchance VARCHAR(4),
-	lootxp SMALLINT,
-	examxp SMALLINT
+	lootxp 		SMALLINT,
+	examxp 		SMALLINT
 	--FOREIGN KEY (currId) REFERENCES currency(currId)
 );
 --select * from itemType
@@ -271,3 +271,47 @@ VALUES (27, NULL, 'Analgin painkillers', '0.1 kg', '1x1', '₽3,800', NULL, NULL
 	    'Energy recovery for 30 seconds (-0.8), hydration recovery for 30 seconds (-1), Stress Resistance for 60 seconds (-10)', 
 		1, '2s', '4%', 20, 8)
 
+-- select * from location
+-- DROP TABLE location
+CREATE TABLE "location"
+(
+	locationId 	SMALLINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	"name" 		VARCHAR(30),
+	description VARCHAR(300),
+	duration 	VARCHAR(7),
+	players 	VARCHAR(5),
+	status 		VARCHAR(50)
+)
+
+INSERT INTO "location"("name", description, duration, players, status)
+VALUES('Factory', 'A small, fast-paced CQC map inside of a multi-story industrial factory, complete with 
+	   tunnels and overhead walkways.', '35 min', '4-6', 'Released'),
+	  
+	  ('Customs', 'Taking placed in an industrial part of Tarkov, Customs features a self-storage lot, a river with a bridge, 
+	   a two and three story dormitory, gas stations, warehouses, construction zones, and some military checkpoints.',
+	    '50 min', '6-12', 'Released'),
+	  
+	  ('Woods', 'A moderately sized section of woods with some open fields, small hills, 
+	   a logging camp, and a couple of bunkers.', '45 min', '6-12', 'Released'),
+	  
+	  ('Shoreline', 'A large map that runs along a shoreline. A small town, a sunken village, a gas station, a pier, 
+	   a guarded pill-box, a radio station, and, most notably, a large 3-story health resort are included. 
+	   The health resort also has a basement in-ground pool, a gym, tennis courts, and a theatre.', '60 min', '8-13', 'Released'),
+	  
+	  ('Interchange', 'A three-story shopping complex comprising of a variety of different types of stores typical to 
+	   malls, as well as 3 major anchor stores IDEA, OLI, and Goshan. It also has underground parking, roads circling the 
+	   building, and a go-kart track.', '60 min', '9-14', 'Released'),
+	  
+	  ('The Lab', '	Underground laboratory complex TerraGroup Labs is a secret object right under the center of Tarkov. 
+	   Officially, this research center does not exist and, based on data scraps, is engaged in R&D, 
+	   testing and simulation projects in chemistry, physics, biology, and high-tech areas.', '55 min', '6-10', 'Released'),
+	  
+	  ('Reserve', NULL, NULL, NULL, 'Upcoming Release in v0.12'),
+	  ('Hideout', NULL, NULL, NULL, 'Upcoming Release in v0.12'),
+	  ('Streets of Tarkov', NULL, NULL, NULL, 'Unreleased'),
+	  ('Suburbs', NULL, NULL, NULL, 'Unreleased'),
+	  ('Town', NULL, NULL, NULL, 'Unreleased'),
+	  ('Lighthouse', NULL, NULL, NULL, 'Unreleased'),
+	  ('Terminal', NULL, NULL, NULL, 'Unreleased'),
+	  ('Private Sector', NULL, NULL, NULL, 'Unreleased'),
+	  ('Arena', NULL, NULL, NULL, 'Unreleased')
