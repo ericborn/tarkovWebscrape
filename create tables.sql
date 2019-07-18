@@ -75,8 +75,9 @@ CREATE TABLE itemType
 --truncate table itemType
 INSERT INTO public.itemType("itemType")
 VALUES('Assault rifle'),('Assault carbine'),('Light machine gun'),('Submachine gun'),('Shotgun'),('Designated marksman rifle'),
-('Sniper rifle'),('Pistol'),('Melee weapon'),('Fragmentation grenade'),('Smoke grenade'),('Stun grenade'),('Mask'),('Armor vest'),('Helmet'),('Armored chest rig'),
-('Chest rig'),('Night vision'),('Goggles'),('Backpack'),('Cap'),('Head Mount'),('Mask'),('Bandana'),('Hat'),('Bag'),('Headset')
+('Sniper rifle'),('Pistol'),('Melee weapon'),('Fragmentation grenade'),('Smoke grenade'),('Stun grenade'),('Mask'),('Armor vest'),
+('Helmet'),('Armored chest rig'),('Chest rig'),('Night vision'),('Goggles'),('Backpack'),('Cap'),('Head Mount'),('Mask'),
+('Bandana'),('Hat'),('Bag'),('Headset'),('Stimulator'),('Drug'),('Medical item'), ('Consumable'),('medikit')
 --,(''),(''),(''),(''),(''),('');
 --select * from itemType
 
@@ -156,3 +157,117 @@ ALTER COLUMN defaultMag			TYPE varchar(50)
 --Start Equipment
 SELECT * FROM equipmentproperties
 where slotid = 5
+
+-- DROP TABLE medical
+CREATE TABLE medical
+(
+	medId	   SMALLINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	itemtypeid SMALLINT,
+	slotid SMALLINT,
+	name VARCHAR(100),
+	weight varchar(10),
+	gridsize VARCHAR(7),
+	price VARCHAR(10),
+	traderid SMALLINT,
+	rarity VARCHAR(30),
+	hpUse SMALLINT,
+	hpTotal SMALLINT,
+	removes VARCHAR(500),
+	adds VARCHAR(500),
+	buff VARCHAR(500),
+	debuff VARCHAR(500),
+	uses SMALLINT,
+	usetime VARCHAR(4),
+	spawnchance VARCHAR(4),
+	lootxp SMALLINT,
+	examxp SMALLINT
+	--FOREIGN KEY (currId) REFERENCES currency(currId)
+);
+--select * from itemType
+--select * from medical
+
+--truncate table medical
+
+--!!!!! Check item types!!!!!!!!!
+INSERT INTO public.medical(itemtypeid, slotid, name, weight, gridsize, price, traderid, rarity, hpUse, hpTotal, 
+						   removes, adds, Buff, Debuff, uses, usetime, spawnchance, lootxp, examxp)
+VALUES (27, NULL, 'Augmentin antibiotic pills', '0.1 kg', '1x1', '₽3,800', NULL, NULL, NULL, NULL, 'Pain', 
+		'On Painkillers for 230s', NULL, NULL, 4, '3s', '5%', 20, 8),
+	   
+	   (27, NULL, 'Analgin painkillers', '0.3 kg', '1x1', '₽8,900', NULL, NULL, NULL, NULL, 'Pain, Toxication', 
+		'On Painkillers for 260s', NULL, NULL, 1, '5s', '5%', 50, 25),
+	   
+	   (27, NULL, 'Morphine injector', '0.1 kg', '1x1', '₽5,500', NULL, 'Rare', NULL, NULL, 'Pain, Contusion', 
+		'On Painkillers for 400s', NULL, NULL, 1, '2s', '7%', 20, 8),
+	   
+	   (27, NULL, 'Ibuprofen painkiller', '0.1 kg', '1x1', '₽7,500', NULL, 'Rare', NULL, NULL, 'Pain, Contusion', 
+		'On Painkillers for 600s', NULL, NULL, 12, '5s', NULL, NULL, NULL),
+	   
+	   (27, NULL, 'Aseptic Bandage', '0.04 kg', '1x1', '₽1,300', NULL, 'Common', NULL, NULL, 'Bloodloss', 'Fresh wound', 
+	    NULL, NULL, 1, '4s', '15%', 10, 10),
+	   
+	   (27, NULL, 'Army Bandage', '0.043 kg', '1x1', '₽1,830', NULL, 'Rare', NULL, NULL, 'Bloodloss', 'Fresh wound', 
+	   	NULL, NULL, 2, '4s', '20%', 20, 2),
+	   
+	   (29, NULL, 'Condensed milk', '0.4 kg', '1x1', '₽8,500', NULL, NULL, NULL, NULL, 'Bloodloss, Hydration -50', 
+		'Energy +60, Fresh wound', NULL, NULL, 1, '4s', NULL, 50, 20),
+	   
+	   (30, NULL, 'AI-2', '0.5 kg', '1x1', '₽3,250', NULL, 'Common', 50, 100, 'Radiation Exposure', 'Fresh wound', 
+	   	NULL, NULL, NULL, '2s', '15%', 25, 10),
+	   
+	   (27, NULL, 'Car first aid kit', '1 kg', '2x1', '₽4,450', NULL, 'Common', 70, 220, 'Bloodloss, Toxication, Radiation Exposure', 
+		'Fresh wound', NULL, NULL, NULL, '3s', '10%', 25, 10),
+	   
+	   (27, NULL, 'Salewa first aid kit', '0.6 kg', '2x1', '₽7,500', NULL, 'Rare', 85, 400, 'Bloodloss', 'Fresh wound', 
+	   NULL, NULL, NULL, '3s', '9%', 20, 6),
+	   
+	   (27, NULL, 'IFAK personal tactical first aid kit', '0.8 kg', '1x1', '₽10,850', NULL, 'Super rare', 50, 300, 
+		'Bloodloss, Toxication, Radiation Exposure', 'Fresh wound', NULL, NULL, NULL, '3s', '7%', 25, 10),
+	   
+	   
+	   (27, NULL, 'Grizzly first aid kit', '1.6 kg', '2x2', '₽17,000', NULL, 'Super rare', 175, 1800, 
+	    'Bloodloss, fracture, contusion, pain', 'Fresh wound', NULL, NULL, NULL, '5s', '1%', 40, 10),
+	   
+	   
+	   (27, NULL, 'Immobilizing splint', '0.17 kg', '1x1', '₽1,855', NULL, 'Common', NULL, NULL, 'Fracture', NULL, 
+	   NULL, NULL, 1, '5s', '15%', 40, 2),
+	   
+	   
+	   (27, NULL, 'Alu Immobilizing splint', '0.22 kg', '1x1', '₽5,980', NULL, NULL, NULL, NULL, 'Fracture', NULL, 
+	   NULL, NULL, 5, '3s', NULL, NULL, NULL),
+	   
+	   (27, NULL, 'Vaseline', '0.01 kg', '1x1', '₽8,060', NULL, NULL, NULL, NULL, 'Pain', 'On Painkillers for 500s', 
+	   NULL, NULL, 10, '6s', NULL, 100, 4),
+	   
+	   (27, NULL, 'Golden star balm', '0.1 kg', '1x1', '₽18,510', NULL, 'Super rare',  NULL, NULL,
+		'Contusion, Pain, Toxication, Radiation Exposure for 600s', 'On Painkillers for 600s', 
+		'Energy and Hydration recovery, 1 per/s for 5s', NULL, 10, '7s', '1%', 250, 4),
+	   
+	   (27, NULL, 'Combat stimulant SJ1', '0.5 kg', '1x1', '₽27,610', NULL, NULL, NULL, NULL, NULL, NULL,
+	    'Endurance for 180 seconds (+25), Strength for 180 seconds (+25), Stress Resistance for 180 seconds (+25)', 
+		'Energy recovery for 200 seconds (-0.25), hydration recovery for 200 seconds (-0.3)', 1, '2s', '1%', 20, 8),
+
+	   (27, NULL, 'Regenerative stimulant injector', '0.1 kg', '1x1', '₽29,100', NULL, 'Rare', NULL, NULL, 'Contusion', NULL, 
+	    'Metabolism, Immunity by +20 for 90s, Health regeneration by 30 for 30s, energy recovery by 1 for 30s', 
+		'Energy recovery by -4 for 20s, Health and Endurance by -10 for 60s', 1, '2s', '2%', 20, 8),
+	   
+	   (27, NULL, 'Combat stimulant injector SJ6', '0.1 kg', '1x1', '₽21,500', NULL, 'Rare', NULL, NULL, NULL, NULL, 
+	    'Max stamina for 240 seconds (+50), Stamina recovery rate for 240 seconds (+2.5)', 
+		'Hands tremor for 60 seconds, tunnel effect for 30 seconds', 1, '2s', '5%', 20, 8),
+	   
+	   (27, NULL, 'Propital', '0.1 kg', '1x1', '₽16,200', NULL, 'Super rare', NULL, NULL, 'Pain, Contusion, Toxication', NULL,
+		'Metabolism for 300 seconds (+20), Health for 300 seconds (+20), Vitality for 300 seconds (+20), 
+		health regeneration for 300 seconds (+1)', 
+		'hand tremor for 300 seconds, tunnel effect for 60 seconds, pain for 120 seconds', 1, '2s', '7%', 20, 8),
+	   
+	   (27, NULL, 'Hemostatic drug Zagustin', '0.1 kg', '1x1', '₽25,800', NULL, 'Rare', NULL, NULL, 'Bloodloss', NULL, 
+	    'Vitality for 180 seconds (+20), Prevents bleeding for 180 seconds', 
+		'hydration recovery for 50 seconds (-1.4), Causes hand tremor for 120 seconds, Decreases Metabolism for 180 seconds (-10)', 
+		1, '2s', '2%', 20, 8),
+	   
+	   (27, NULL, 'Adrenaline injector', '0.1 kg', '1x1', '₽24,200', NULL, NULL, NULL, NULL, 'Pain, Contusion', 'On Painkillers for 600s', 
+	    'Endurance for 60 seconds (+20), Strength for 60 seconds (+20), Mag Drills for 60 seconds (+20), 
+		health regeneration for 15 seconds (+4)', 
+	    'Energy recovery for 30 seconds (-0.8), hydration recovery for 30 seconds (-1), Stress Resistance for 60 seconds (-10)', 
+		1, '2s', '4%', 20, 8)
+
