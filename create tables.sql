@@ -9,22 +9,6 @@ CREATE TABLE loyalty
 	,FOREIGN KEY (currId) REFERENCES currency(currId)
 );
 
-CREATE TABLE trader
-(
-	 traderId SMALLINT NOT NULL PRIMARY KEY
-	,traderName VARCHAR(20)
-	,bio VARCHAR(100)
-	,wares VARCHAR(50)
-);
-
-CREATE TABLE location
-(
-	 locationId SMALLINT NOT NULL PRIMARY KEY
-	,name VARCHAR(30)
-	,desc VARCHAR(100)
-	,status VARCHAR(10)
-);
-
 CREATE TABLE quest
 (
 	 questId SMALLINT NOT NULL PRIMARY KEY
@@ -156,7 +140,7 @@ ALTER COLUMN defaultMag			TYPE varchar(50)
 -- DROP TABLE equipmentproperties
 --Start Equipment
 SELECT * FROM equipmentproperties
-where slotid = 5
+where slotid = 5;
 
 -- DROP TABLE medical
 CREATE TABLE medical
@@ -187,8 +171,6 @@ CREATE TABLE medical
 --select * from medical
 
 --truncate table medical
-
---!!!!! Check item types!!!!!!!!!
 INSERT INTO public.medical(itemtypeid, slotid, name, weight, gridsize, price, traderid, rarity, hpUse, hpTotal, 
 						   removes, adds, Buff, Debuff, uses, usetime, spawnchance, lootxp, examxp)
 VALUES (27, NULL, 'Analgin painkillers', '0.1 kg', '1x1', '₽3,800', NULL, NULL, NULL, NULL, 'Pain', 
@@ -269,7 +251,7 @@ VALUES (27, NULL, 'Analgin painkillers', '0.1 kg', '1x1', '₽3,800', NULL, NULL
 	    'Endurance for 60 seconds (+20), Strength for 60 seconds (+20), Mag Drills for 60 seconds (+20), 
 		health regeneration for 15 seconds (+4)', 
 	    'Energy recovery for 30 seconds (-0.8), hydration recovery for 30 seconds (-1), Stress Resistance for 60 seconds (-10)', 
-		1, '2s', '4%', 20, 8)
+		1, '2s', '4%', 20, 8);
 
 -- select * from location
 -- DROP TABLE location
@@ -281,7 +263,7 @@ CREATE TABLE "location"
 	duration 	VARCHAR(7),
 	players 	VARCHAR(5),
 	status 		VARCHAR(50)
-)
+);
 
 INSERT INTO "location"("name", description, duration, players, status)
 VALUES('Factory', 'A small, fast-paced CQC map inside of a multi-story industrial factory, complete with 
@@ -314,4 +296,46 @@ VALUES('Factory', 'A small, fast-paced CQC map inside of a multi-story industria
 	  ('Lighthouse', NULL, NULL, NULL, 'Unreleased'),
 	  ('Terminal', NULL, NULL, NULL, 'Unreleased'),
 	  ('Private Sector', NULL, NULL, NULL, 'Unreleased'),
-	  ('Arena', NULL, NULL, NULL, 'Unreleased')
+	  ('Arena', NULL, NULL, NULL, 'Unreleased');
+
+-- select * from trader
+-- DROP TABLE trader
+CREATE TABLE trader
+(
+	traderId SMALLINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+	traderName VARCHAR(20),
+	bio VARCHAR(500),
+	wares VARCHAR(500)
+);
+
+
+INSERT INTO trader(traderName, bio, wares)
+VALUES('Prapor', 'Warrant officer in charge of supply warehouses on the sustaining base for the Internal Troops 
+	   enforcing the Norvinsk region blockade. During the Contract Wars he secretly supplied the BEAR PMC operators 
+	   with weapons, ammunition, and various other provisions he had at his disposal.', 
+	   'Post-Soviet Bloc weapons, Ammunition, Grenades, Magazines, Weapon Modifications'),
+	   
+	   ('Therapist', 'Head of the Trauma Care Department of the Tarkov Central City Hospital.', 'Medical supplies,
+		Food, Information, Keys'),
+	   
+	   ('Fence', 'The conflict had barely started when Fence had already started setting up anonymous outlets for 
+		buying and selling goods. Keeping incognito, he nevertheless managed to put together a well-organised smuggler 
+		network operating all over Norvinsk region.', 'Everything'),
+	   
+	   ('Skier', 'Port zone customs terminal employee. Initially dealing in the terminal''s goods, over the course of 
+		conflict put together a gang to grab everything he could put his hands on in the vicinity of the terminal.', 
+		'Containers, Weapons, Ammunition, Weapon modifications, Euros'),
+	   
+	   ('Peacekeeper', 'UN peacekeeping force supplies officer, based in one of the central checkpoints leading to the 
+		Tarkov port zone. The blue helmets have been venturing into small deals from the very beginning, buying everything 
+		of value in exchange for western weapons, ammo and some kinds of military equipment.', 
+		'Western/NATO weapons, Ammunition, Grenades, Magazines, Weapon modifications, US Dollars'),
+	   
+	   ('Mechanic', 'Chemical plant foreman before conflict, from its very beginning he took to weapon modification works 
+		and repairs and maintenance of complex equipment and tech. He prefers clandestine solo living and operates discreetly, 
+		placing complicated and challenging tasks above everything.', 'Ammunition, Glock 17/18, weapon Modifications, Magazines, 
+		Western/NATO Weapons'),
+
+	   ('Ragman', 'Abramyan Arshavir Sarkisivich aka Ragman. He worked as a director in a big market located in Tarkov''s suburb. 
+		Sells everything related to clothing and gear.', 'Clothing, Armor, Backpacks, Tactical rigs, Gear');
+
