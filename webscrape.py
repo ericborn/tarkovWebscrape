@@ -64,12 +64,12 @@ colmns = ['itemtypeid','slotid','name','weight','gridsize','price','traderid','o
 #####
 
 # Pull down weapon page
-webpage = requests.get('https://escapefromtarkov.gamepedia.com/index.php?title=DS_Arms_SA-58_7.62x51&action=edit')
+webpage = requests.get('https://escapefromtarkov.fandom.com/wiki/Kalashnikov_AK-101_5.56x45_assault_rifle?action=edit')
 
 # Decode the page
 webpageSrc = webpage.content.decode('utf-8')
 
-# conver the page to beautiful soup format
+# convert the page to beautiful soup format
 soup = bs(webpageSrc, 'lxml')
 
 # Grab gun name from the firstHeading
