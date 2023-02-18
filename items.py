@@ -11,7 +11,7 @@ import pandas as pd
 import re
 import time
 
-webpage = requests.get('https://escapefromtarkov.fandom.com/wiki/Loot?action=edit&section=13')
+webpage = requests.get('https://escapefromtarkov.fandom.com/wiki/Loot?action=edit&section=2')
 
 # Decode the page
 webpageSrc = webpage.content.decode('utf-8')
@@ -22,26 +22,27 @@ soup = bs(webpageSrc, 'lxml')
 # converts textarea to a string
 text = str(soup.textarea.contents[0])
 
-# Grab item category
-# create a while loop that iterates until it hits the third equal sign (=)
-# then breaks. Add each letter in a variable then remove the first two items
-# since they will be ==
-equal_count = 0
+# not used since there are 3 categories they're manually being set
+# # Grab item category
+# # create a while loop that iterates until it hits the third equal sign (=)
+# # then breaks. Add each letter in a variable then remove the first two items
+# # since they will be ==
+# equal_count = 0
 
-item_cat = ''
+# item_cat = ''
 
-i = 0
+# i = 0
 
-while equal_count < 3:
-    if text[i] == '=':
-        equal_count += 1
-        item_cat = item_cat + str(text[i])
-    else:
-        item_cat = item_cat + str(text[i])
-    i += 1
+# while equal_count < 3:
+#     if text[i] == '=':
+#         equal_count += 1
+#         item_cat = item_cat + str(text[i])
+#     else:
+#         item_cat = item_cat + str(text[i])
+#     i += 1
 
-# remove first two and last characters since they are all equal signs
-item_cat = item_cat[2:len(item_cat)-1]
+# # remove first two and last characters since they are all equal signs
+# item_cat = item_cat[2:len(item_cat)-1]
 
 # split text on |link=
 item_split = text.split(r'|link=')
@@ -53,36 +54,126 @@ item_list = []
 for items in range(1, len(item_split)):
     item_list.append(item_split[items].split(r']')[0])
 
-# TODO
-# need to create a dataframe, store values from item_list then append
+# list got cut here for some reason so repeating second and third converts to list
+# start info items
+webpage = requests.get('https://escapefromtarkov.fandom.com/wiki/Loot?action=edit&section=12')
+
+# Decode the page
+webpageSrc = webpage.content.decode('utf-8')
+
+# conver the page to beautiful soup format
+soup = bs(webpageSrc, 'lxml')
+
+# converts textarea to a string
+text = str(soup.textarea.contents[0])
+
+# # Grab item category
+# # create a while loop that iterates until it hits the third equal sign (=)
+# # then breaks. Add each letter in a variable then remove the first two items
+# # since they will be ==
+# equal_count = 0
+
+# item_cat = ''
+
+# i = 0
+
+# while equal_count < 3:
+#     if text[i] == '=':
+#         equal_count += 1
+#         item_cat = item_cat + str(text[i])
+#     else:
+#         item_cat = item_cat + str(text[i])
+#     i += 1
+
+# # remove first two and last characters since they are all equal signs
+# item_cat = item_cat[2:len(item_cat)-1]
+
+# split text on |link=
+item_split = text.split(r'|link=')
+
+for items in range(1, len(item_split)):
+    item_list.append(item_split[items].split(r']')[0])
+
+# start info items
+webpage = requests.get('https://escapefromtarkov.fandom.com/wiki/Loot?action=edit&section=13')
+
+# Decode the page
+webpageSrc = webpage.content.decode('utf-8')
+
+# conver the page to beautiful soup format
+soup = bs(webpageSrc, 'lxml')
+
+# converts textarea to a string
+text = str(soup.textarea.contents[0])
+
+# # Grab item category
+# # create a while loop that iterates until it hits the third equal sign (=)
+# # then breaks. Add each letter in a variable then remove the first two items
+# # since they will be ==
+# equal_count = 0
+
+# item_cat = ''
+
+# i = 0
+
+# while equal_count < 3:
+#     if text[i] == '=':
+#         equal_count += 1
+#         item_cat = item_cat + str(text[i])
+#     else:
+#         item_cat = item_cat + str(text[i])
+#     i += 1
+
+# # remove first two and last characters since they are all equal signs
+# item_cat = item_cat[2:len(item_cat)-1]
+
+# split text on |link=
+item_split = text.split(r'|link=')
+
+for items in range(1, len(item_split)):
+    item_list.append(item_split[items].split(r']')[0])
+
+
+# create a dataframe, store values from item_list then append
 # the following types below
 
-# other 
-item_list[0:27]
+items_df = pd.DataFrame({'item_category': 'other','item_name': item_list, \
+                         'type': 'other'})
 
+# set category to barter items
+items_df['item_category'][0:182] = 'barter items'
+    
 # building materials
-item_list[27:44]
+items_df['type'][27:44] = 'building materials'
 
 # electronics
-item_list[44:89]
+items_df['type'][44:89] = 'electronics'
 
 # energy elements
-item_list[89:97]
+items_df['type'][89:97] = 'energy elements'
 
 # Flammable materials
-item_list[97:112]
+items_df['type'][97:112] = 'flammable materials'
 
 # Household materials
-item_list[112:129]
+items_df['type'][112:129] = 'household materials'
 
 # medical supplies
-item_list[129:140]
+items_df['type'][129:140] = 'medical supplies'
 
 # tools
-item_list[140:160]
+items_df['type'][140:160] = 'tools'
 
 # valuables
-item_list[160:182]
+items_df['type'][160:182] = 'valuables'
 
-# list got cut here for some reason, need to resolve as there are two more
-# groups of items
+# info items
+items_df['type'][182:197] = 'info items'
+items_df['item_category'][182:197] = 'info items'
+
+# special equipment
+items_df['type'][197:207] = 'special equipment'
+items_df['item_category'][197:207] = 'special equipment'
+
+# write df to csv
+items_df.to_csv(index=False)
