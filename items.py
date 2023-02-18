@@ -67,27 +67,6 @@ soup = bs(webpageSrc, 'lxml')
 # converts textarea to a string
 text = str(soup.textarea.contents[0])
 
-# # Grab item category
-# # create a while loop that iterates until it hits the third equal sign (=)
-# # then breaks. Add each letter in a variable then remove the first two items
-# # since they will be ==
-# equal_count = 0
-
-# item_cat = ''
-
-# i = 0
-
-# while equal_count < 3:
-#     if text[i] == '=':
-#         equal_count += 1
-#         item_cat = item_cat + str(text[i])
-#     else:
-#         item_cat = item_cat + str(text[i])
-#     i += 1
-
-# # remove first two and last characters since they are all equal signs
-# item_cat = item_cat[2:len(item_cat)-1]
-
 # split text on |link=
 item_split = text.split(r'|link=')
 
@@ -106,27 +85,6 @@ soup = bs(webpageSrc, 'lxml')
 # converts textarea to a string
 text = str(soup.textarea.contents[0])
 
-# # Grab item category
-# # create a while loop that iterates until it hits the third equal sign (=)
-# # then breaks. Add each letter in a variable then remove the first two items
-# # since they will be ==
-# equal_count = 0
-
-# item_cat = ''
-
-# i = 0
-
-# while equal_count < 3:
-#     if text[i] == '=':
-#         equal_count += 1
-#         item_cat = item_cat + str(text[i])
-#     else:
-#         item_cat = item_cat + str(text[i])
-#     i += 1
-
-# # remove first two and last characters since they are all equal signs
-# item_cat = item_cat[2:len(item_cat)-1]
-
 # split text on |link=
 item_split = text.split(r'|link=')
 
@@ -134,9 +92,8 @@ for items in range(1, len(item_split)):
     item_list.append(item_split[items].split(r']')[0])
 
 
-# create a dataframe, store values from item_list then append
-# the following types below
-
+# create a dataframe, store values from item_list then manually update
+# types and categories
 items_df = pd.DataFrame({'item_category': 'other','item_name': item_list, \
                          'type': 'other'})
 
@@ -176,4 +133,4 @@ items_df['type'][197:207] = 'special equipment'
 items_df['item_category'][197:207] = 'special equipment'
 
 # write df to csv
-items_df.to_csv(index=False)
+items_df.to_csv('items.csv', index=False)
