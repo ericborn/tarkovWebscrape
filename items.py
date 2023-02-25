@@ -35,6 +35,11 @@ def scrape_setup(url):
 
 
 loot_items = scrape_setup('https://escapefromtarkov.fandom.com/wiki/Loot?action=edit&section=2')
+
+# manually convert dogtag to BEAR and add USEC
+loot_items[loot_items.index('Dogtag')] = 'BEAR Dogtag'
+loot_items.insert(10, 'USEC Dogtag')
+
 loot_items_2 = scrape_setup('https://escapefromtarkov.fandom.com/wiki/Loot?action=edit&section=12')
 loot_items_3 = scrape_setup('https://escapefromtarkov.fandom.com/wiki/Loot?action=edit&section=13')
 
@@ -53,39 +58,39 @@ items_df = pd.DataFrame({'item_category': item_category,'item_name': loot_items,
                          'type': item_type})
 
 # set category to barter items
-items_df['item_category'][0:182] = 'Barter Items'
+items_df['item_category'][0:183] = 'Barter Items'
     
 # building materials
-items_df['type'][27:44] = 'Building Materials'
+items_df['type'][28:45] = 'Building Materials'
 
 # electronics
-items_df['type'][44:89] = 'Electronics'
+items_df['type'][45:90] = 'Electronics'
 
 # energy elements
-items_df['type'][89:97] = 'Energy Elements'
+items_df['type'][90:98] = 'Energy Elements'
 
 # Flammable materials
-items_df['type'][97:112] = 'Flammable Materials'
+items_df['type'][98:113] = 'Flammable Materials'
 
 # Household materials
-items_df['type'][112:129] = 'Household Materials'
+items_df['type'][113:130] = 'Household Materials'
 
 # medical supplies
-items_df['type'][129:140] = 'Medical Supplies'
+items_df['type'][130:141] = 'Medical Supplies'
 
 # tools
-items_df['type'][140:160] = 'Tools'
+items_df['type'][141:161] = 'Tools'
 
 # valuables
-items_df['type'][160:182] = 'Valuables'
+items_df['type'][161:183] = 'Valuables'
 
 # info items
-items_df['type'][182:197] = 'Info Items'
-items_df['item_category'][182:197] = 'Info Items'
+items_df['type'][183:198] = 'Info Items'
+items_df['item_category'][183:198] = 'Info Items'
 
 # special equipment
-items_df['type'][197:207] = 'Special Equipment'
-items_df['item_category'][197:207] = 'Special Equipment'
+items_df['type'][198:] = 'Special Equipment'
+items_df['item_category'][198:] = 'Special Equipment'
 
 # write df to csv
 # items_df.to_csv('items.csv', index=False)
@@ -435,6 +440,24 @@ money_df = pd.DataFrame({'item_category': item_category,\
 ####
 # end money
 ####
+
+# ####
+# # start actions
+# # This is moved into its own table
+# ####
+
+# # manually created since there are only 3
+# action_list = ['Eliminate', 'Find', 'Pick up', 'survive']
+
+# item_category = 'Quest'
+# item_type = 'Action'
+
+# action_df = pd.DataFrame({'item_category': item_category,\
+#                          'item_name': action_list, 'type': item_type})
+
+# ####
+# # end actions
+# ####
 
 ####
 # start secure container
