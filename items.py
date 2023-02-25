@@ -441,6 +441,26 @@ money_df = pd.DataFrame({'item_category': item_category,\
 # end money
 ####
 
+####
+# start quest items
+####
+
+# manually created since there is not a dedicated page for all on the wiki
+quest_item_list = ['Bronze Pocket Watch', 'Secure Folder 0022', 
+                   'Secure Folder 0031', 'Military Documents 1',
+                   'Military Documents 2', 'Military Documents 3',
+                   'Sealed Letter', 'Bank Case' 'Registered Letter']
+
+item_category = 'Quest'
+item_type = 'Quest'
+
+quest_item_df = pd.DataFrame({'item_category': item_category,\
+                         'item_name': quest_item_list, 'type': item_type})
+
+####
+# end quest items
+####
+
 # ####
 # # start actions
 # # This is moved into its own table
@@ -541,7 +561,7 @@ gear_components_df['type'][35] = 'Vanity'
 all_dataframes = [items_df, medical_df, provision_df, key_df, armbands_df, 
                   armor_vest_df, backpack_df, rig_df, eyewear_df,face_cover_df,
                   headset_df, helmet_df, secure_container_df, weapons_df, 
-                  money_df, gear_components_df]
+                  money_df, quest_item_df, gear_components_df]
 
 all_items_df = pd.concat(all_dataframes)
 
