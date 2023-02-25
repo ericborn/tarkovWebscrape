@@ -419,9 +419,106 @@ weapons_df['type'][145:] = 'Stun Grenade'
 # end weapons
 ####
 
+####
+# start money
+####
+
+# manually created since there are only 3
+money_list = ['Dollar', 'Euro', 'Rouble']
+
+item_category = 'Money'
+item_type = 'Currency'
+
+money_df = pd.DataFrame({'item_category': item_category,\
+                         'item_name': money_list, 'type': item_type})
+
+####
+# end money
+####
+
+####
+# start secure container
+####
+gear_components = scrape_setup('https://escapefromtarkov.fandom.com/wiki/Gear_components?action=edit')    
+
+item_category = 'Gear Component'
+item_type = 'Gear'
+
+# create a dataframe, store values from item_list then manually update
+# types and categories
+gear_components_df = pd.DataFrame({'item_category': item_category,\
+                           'item_name': gear_components, 'type': item_type})
+
+gear_components_df['type'][0:4] = 'Night Vision Device'
+gear_components_df['type'][4] = 'Thermal Vision Device'
+gear_components_df['type'][5] = 'Headset'
+gear_components_df['type'][6:19] = 'Visor'
+gear_components_df['type'][19:29] = 'Additional Armor'
+gear_components_df['type'][29:35] = 'Mount'
+gear_components_df['type'][35] = 'Vanity'
+
+# write df to csv
+# secure_container_df.to_csv('secure_container.csv', index=False)
+
+####
+# end secure container
+####
+
+####
+# !!!TODO!!!
+# ammo needs a recursive link crawler that drills into each ammo
+# grabs all of the types along with ammo stats and is formatted into a DF
+# start ammo
+####
+# ammo = scrape_setup('https://escapefromtarkov.fandom.com/wiki/Ammunition?action=edit')    
+
+# item_category = 'Ammo'
+# item_type = 'Secure Container'
+
+# # create a dataframe, store values from item_list then manually update
+# # types and categories
+# ammo_df = pd.DataFrame({'item_category': item_category,\
+#                            'item_name': ammo, 'type': item_type})
+
+# # write df to csv
+# # secure_container_df.to_csv('secure_container.csv', index=False)
+
+####
+# end ammo
+####
+
+####
+# !!!TODO!!!
+# Weapon mods needs a recursive link crawler that drills into each mod
+# grabs all of the types along with stats and is formatted into a DF
+# start weapon mods
+####
+# weap_mods = scrape_setup('https://escapefromtarkov.fandom.com/wiki/Weapon_mods')    
+
+# item_category = 'Weapon Mod'
+# item_type = 'Functional Mod'
+
+# # create a dataframe, store values from item_list then manually update
+# # types and categories
+# weap_mods_df = pd.DataFrame({'item_category': item_category,\
+#                            'item_name': weap_mods, 'type': item_type})
+
+# # write df to csv
+# # weap_mods_df.to_csv('weapon_mods.csv', index=False)
+
+####
+# end weapon mods
+####
+
+####
+# combine and output
+####
+
+
 all_dataframes = [items_df, medical_df, provision_df, key_df, armbands_df, 
                   armor_vest_df, backpack_df, rig_df, eyewear_df,face_cover_df,
-                  headset_df, helmet_df, secure_container_df, weapons_df]
+                  headset_df, helmet_df, secure_container_df, weapons_df, 
+                  money_df, gear_components_df]
 
 all_items_df = pd.concat(all_dataframes)
 
