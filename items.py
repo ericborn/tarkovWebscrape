@@ -48,8 +48,8 @@ for item in loot_items_2:
 for item in loot_items_3:
     loot_items.append(item)    
 
-item_category = 'other'
-item_type = 'other'
+item_category = 'Other'
+item_type = 'Other'
 
 # create a dataframe, store values from item_list then manually update
 # types and categories
@@ -338,13 +338,96 @@ item_type = 'Headwear'
 helmet_df = pd.DataFrame({'item_category': item_category,\
                            'item_name': helmet, 'type': item_type})
 
-helmet_df['type'][0:2] = 'Mount'
-helmet_df['type'][2:33] = 'Armored Helmet'
-helmet_df['type'][33:] = 'Vanity'
+helmet_df['type'][0:2] = 'Headwear Mount'
+helmet_df['type'][2:33] = 'Headwear Armored'
+helmet_df['type'][33:] = 'Headwear Vanity'
 
 # write df to csv
-# face_cover_df.to_csv('helmet.csv', index=False)
+# helmet_df.to_csv('helmet.csv', index=False)
 
 ####
 # end Helmet
 ####
+
+####
+# start secure container
+####
+secure_container = scrape_setup('https://escapefromtarkov.fandom.com/wiki/Secure_containers?action=edit')    
+
+item_category = 'Gear'
+item_type = 'Secure Container'
+
+# create a dataframe, store values from item_list then manually update
+# types and categories
+secure_container_df = pd.DataFrame({'item_category': item_category,\
+                           'item_name': secure_container, 'type': item_type})
+
+# write df to csv
+# secure_container_df.to_csv('secure_container.csv', index=False)
+
+####
+# end secure container
+####
+
+####
+# start weapons
+####
+
+# primary
+weap_list = [scrape_setup('https://escapefromtarkov.fandom.com/wiki/Weapons?action=edit&section=1')]
+
+# secondary
+weap_list.append(scrape_setup('https://escapefromtarkov.fandom.com/wiki/Weapons?action=edit&section=10'))
+
+# special
+weap_list.append(scrape_setup('https://escapefromtarkov.fandom.com/wiki/Weapons?action=edit&section=13'))
+
+# melee
+weap_list.append(scrape_setup('https://escapefromtarkov.fandom.com/wiki/Weapons?action=edit&section=19'))
+
+# throwable
+weap_list.append(scrape_setup('https://escapefromtarkov.fandom.com/wiki/Weapons?action=edit&section=20'))
+
+# flatten list
+weapons = [item for sublist in weap_list for item in sublist]
+
+item_category = 'Weapon'
+item_type = 'Assault Rifles'
+
+# create a dataframe, store values from item_list then manually update
+# types and categories
+weapons_df = pd.DataFrame({'item_category': item_category,\
+                           'item_name': weapons, 'type': item_type})
+
+weapons_df['type'][0:32] = 'Assault Rifle'
+weapons_df['type'][32:42] = 'Assault Carbine'
+weapons_df['type'][42] = 'Light Machine Gun'
+weapons_df['type'][43:62] = 'Submachine Gun'
+weapons_df['type'][62:74] = 'Shotgun'
+weapons_df['type'][74:81] = 'Designated Marksman Rifle'
+weapons_df['type'][81:89] = 'Bolt Action Rifle'
+weapons_df['type'][89:91] = 'Grenade Launcher'
+weapons_df['type'][91:110] = 'Pistol'
+weapons_df['type'][110:113] = 'Revolver'
+weapons_df['type'][113] = 'Signal Pistol'
+weapons_df['type'][114:118] = 'Handheld Flare'
+weapons_df['type'][118:136] = 'Melee'
+weapons_df['type'][136:143] = 'Fragmentation Grenade'
+weapons_df['type'][143:145] = 'Smoke Grenade'
+weapons_df['type'][145:] = 'Stun Grenade'
+
+# write df to csv
+# weapons_df.to_csv('weapons.csv', index=False)
+
+####
+# end weapons
+####
+
+all_dataframes = [items_df, medical_df, provision_df, key_df, armbands_df, 
+                  armor_vest_df, backpack_df, rig_df, eyewear_df,face_cover_df,
+                  headset_df, helmet_df, secure_container_df, weapons_df]
+
+all_items_df = pd.concat(all_dataframes)
+
+# write df to csv
+all_items_df.to_csv('items.csv', index=False)
