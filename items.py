@@ -8,10 +8,6 @@ Created on Fri Feb 17 10:34:03 2023
 import requests
 from bs4 import BeautifulSoup as bs
 import pandas as pd
-import re
-import time
-
-
 
 def scrape_setup(url):
     # get webpage
