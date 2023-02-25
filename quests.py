@@ -44,12 +44,10 @@ for quest in range(1, len(quest_split)):
     quest_list.append(quest_split[quest].split(r']')[0])
 
 quest_giver = '0'
-quest_type = 'Other'
 
 # create a dataframe, store values from item_list then manually update
 # types and categories
-quest_df = pd.DataFrame({'quest_giver': quest_giver,'quest_name': quest_list, \
-                         'type': quest_type})
+quest_df = pd.DataFrame({'quest_giver': quest_giver,'quest_name': quest_list})
 
 # set quest giver
 quest_df['quest_giver'][0:43] = '2'
