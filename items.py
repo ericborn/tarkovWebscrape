@@ -513,18 +513,103 @@ gear_components_df['type'][35] = 'Vanity'
 # grabs all of the types along with ammo stats and is formatted into a DF
 # start ammo
 ####
-# ammo = scrape_setup('https://escapefromtarkov.fandom.com/wiki/Ammunition?action=edit')    
 
-# item_category = 'Ammo'
-# item_type = 'Secure Container'
+header = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76",
+    "X-Requested-With": "XMLHttpRequest"
+}
 
-# # create a dataframe, store values from item_list then manually update
-# # types and categories
-# ammo_df = pd.DataFrame({'item_category': item_category,\
-#                            'item_name': ammo, 'type': item_type})
+url = 'https://escapefromtarkov.fandom.com/wiki/Ammunition'
 
-# # write df to csv
-# # secure_container_df.to_csv('secure_container.csv', index=False)
+# pull down the webpage
+webpage = requests.get(url, headers=header)
+
+# convert the html to a dataframe
+web_df = pd.read_html(webpage.text, header = 0)
+
+ammo_names = []
+
+for df in range(0,6):
+    ammo_names.append(list(web_df[df]['Name']))
+
+# flatten list
+ammo_link_names = [item for sublist in ammo_names for item in sublist]
+
+url_base = 'https://escapefromtarkov.fandom.com/wiki/'
+
+webpage = requests.get(url)
+
+# Decode the page
+webpageSrc = webpage.content.decode('utf-8')
+
+# conver the page to beautiful soup format
+soup = bs(webpageSrc, 'lxml')
+
+# Creates an empty list to store all weapon main view page links
+ammo_links = []
+
+# replace spaces with underscore
+for ammo in range(len(ammo_link_names)):
+    ammo_link_names[ammo] = ammo_link_names[ammo].replace(' ', '_')
+
+# Store links in a list
+for link in soup.find_all('a', class_ = "mw-redirect"):
+    #print(link.get('href'))
+    weapLinks.append(link.get('href'))
+
+# converts textarea to a string
+text = str(soup.textarea.contents[0])
+
+# split text on |link=
+item_split = text.split(r'|link=')
+
+# create and populate a list of items
+item_list = []
+
+for items in range(1, len(item_split)):
+    item_list.append(item_split[items].split(r']')[0])
+    
+
+
+
+
+
+# write df to csv
+# secure_container_df.to_csv('secure_container.csv', index=False)
+
+header = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76",
+    "X-Requested-With": "XMLHttpRequest"
+}
+
+url = 'https://escapefromtarkov.fandom.com/wiki/7.62x25mm_Tokarev'
+
+# pull down the webpage
+webpage = requests.get(url, headers=header)
+
+# convert the html to a dataframe
+web_df = pd.read_html(webpage.text, header = 0)
+
+# create a list of column names
+column_list = list(web_df[0].columns)
+
+# remove the first and last elements from the list
+column_list.pop(0)
+column_list.pop(-1)
+
+# create a dataframe containing just the ammo stats
+ammo_df = web_df[0][column_list]
+
+
+item_category = 'Ammo'
+item_type = 'Secure Container'
+
+# create a dataframe, store values from item_list then manually update
+# types and categories
+ammo_df = pd.DataFrame({'item_category': item_category,\
+                            'item_name': ammo, 'type': item_type})
+
+
 
 ####
 # end ammo
