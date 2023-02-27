@@ -514,6 +514,8 @@ gear_components_df['type'][35] = 'Vanity'
 # start ammo
 ####
 
+url_base = 'https://escapefromtarkov.fandom.com/wiki/'
+
 header = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76",
     "X-Requested-With": "XMLHttpRequest"
@@ -535,44 +537,21 @@ for df in range(0,6):
 # flatten list
 ammo_link_names = [item for sublist in ammo_names for item in sublist]
 
-url_base = 'https://escapefromtarkov.fandom.com/wiki/'
+# webpage = requests.get(url)
 
-webpage = requests.get(url)
+# # Decode the page
+# webpageSrc = webpage.content.decode('utf-8')
 
-# Decode the page
-webpageSrc = webpage.content.decode('utf-8')
-
-# conver the page to beautiful soup format
-soup = bs(webpageSrc, 'lxml')
+# # conver the page to beautiful soup format
+# soup = bs(webpageSrc, 'lxml')
 
 # Creates an empty list to store all weapon main view page links
 ammo_links = []
 
-# replace spaces with underscore
+# replace spaces with underscore, append base URL to each ammo name
 for ammo in range(len(ammo_link_names)):
     ammo_link_names[ammo] = ammo_link_names[ammo].replace(' ', '_')
-
-# Store links in a list
-for link in soup.find_all('a', class_ = "mw-redirect"):
-    #print(link.get('href'))
-    weapLinks.append(link.get('href'))
-
-# converts textarea to a string
-text = str(soup.textarea.contents[0])
-
-# split text on |link=
-item_split = text.split(r'|link=')
-
-# create and populate a list of items
-item_list = []
-
-for items in range(1, len(item_split)):
-    item_list.append(item_split[items].split(r']')[0])
-    
-
-
-
-
+    ammo_links.append(url_base + ammo_link_names[ammo])
 
 # write df to csv
 # secure_container_df.to_csv('secure_container.csv', index=False)
