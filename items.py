@@ -561,32 +561,49 @@ header = {
     "X-Requested-With": "XMLHttpRequest"
 }
 
-url = 'https://escapefromtarkov.fandom.com/wiki/7.62x25mm_Tokarev'
-
-# pull down the webpage
-webpage = requests.get(url, headers=header)
-
-# convert the html to a dataframe
-web_df = pd.read_html(webpage.text, header = 0)
-
-# create a list of column names
-column_list = list(web_df[0].columns)
-
-# remove the first and last elements from the list
-column_list.pop(0)
-column_list.pop(-1)
-
-# create a dataframe containing just the ammo stats
-ammo_df = web_df[0][column_list]
-
-
-item_category = 'Ammo'
-item_type = 'Secure Container'
-
-# create a dataframe, store values from item_list then manually update
-# types and categories
-ammo_df = pd.DataFrame({'item_category': item_category,\
-                            'item_name': ammo, 'type': item_type})
+for url in ammo_links:
+    # pull down the webpage
+    webpage = requests.get(url, headers=header)
+    
+    # convert the html to a dataframe
+    web_df = pd.read_html(webpage.text, header = 0)
+    
+    # create a list of column names
+    column_list = list(web_df[0].columns)
+    
+    # remove the first and last elements from the list
+    column_list.pop(0)
+    column_list.pop(-1)
+    
+    # create a dataframe containing just the ammo stats
+    ammo_df = web_df[0][column_list]
+    
+    # pull down the webpage
+    webpage = requests.get(ammo_links[1], headers=header)
+    
+    # convert the html to a dataframe
+    web_df = pd.read_html(webpage.text, header = 0)
+    
+    # create a list of column names
+    column_list = list(web_df[0].columns)
+    
+    # remove the first and last elements from the list
+    column_list.pop(0)
+    column_list.pop(-1)
+    
+    # create a dataframe containing just the ammo stats
+    ammo_df_1 = web_df[0][column_list]
+    
+    ammo_df.merge(ammo_df_1, how='outer')
+    
+    
+    item_category = 'Ammo'
+    item_type = 'Secure Container'
+    
+    # create a dataframe, store values from item_list then manually update
+    # types and categories
+    ammo_df = pd.DataFrame({'item_category': item_category,\
+                                'item_name': ammo, 'type': item_type})
 
 
 
