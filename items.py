@@ -521,14 +521,23 @@ header = {
     "X-Requested-With": "XMLHttpRequest"
 }
 
-url = 'https://escapefromtarkov.fandom.com/wiki/Ammunition'
+url = 'Ammunition'
 
 # pull down the webpage
-webpage = requests.get(url, headers=header)
+webpage = requests.get(url_base+url, headers=header)
 
 # convert the html to a dataframe
 web_df = pd.read_html(webpage.text, header = 0)
 
+# need to pull column list from a specific ammo page so we can get the ammo stat categories
+# create a list of column names
+column_list = list(web_df[0].columns)
+
+# remove the first and last elements from the list
+column_list.pop(0)
+column_list.pop(-1)
+
+# setup and populate a list of the ammos by name
 ammo_names = []
 
 for df in range(0,6):
@@ -537,15 +546,7 @@ for df in range(0,6):
 # flatten list
 ammo_link_names = [item for sublist in ammo_names for item in sublist]
 
-# webpage = requests.get(url)
-
-# # Decode the page
-# webpageSrc = webpage.content.decode('utf-8')
-
-# # conver the page to beautiful soup format
-# soup = bs(webpageSrc, 'lxml')
-
-# Creates an empty list to store all weapon main view page links
+# Creates and populate a list to store all ammo links
 ammo_links = []
 
 # replace spaces with underscore, append base URL to each ammo name
@@ -553,26 +554,6 @@ for ammo in range(len(ammo_link_names)):
     ammo_link_names[ammo] = ammo_link_names[ammo].replace(' ', '_')
     ammo_links.append(url_base + ammo_link_names[ammo])
 
-# write df to csv
-# secure_container_df.to_csv('secure_container.csv', index=False)
-
-header = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76",
-    "X-Requested-With": "XMLHttpRequest"
-}
-
-# pull down the webpage
-webpage = requests.get(url, headers=header)
-
-# convert the html to a dataframe
-web_df = pd.read_html(webpage.text, header = 0)
-
-# create a list of column names
-column_list = list(web_df[0].columns)
-
-# remove the first and last elements from the list
-column_list.pop(0)
-column_list.pop(-1)
 
 for items in range(len(column_list)):
     column_list[items] = column_list[items].split(r'[\s]')[0]
